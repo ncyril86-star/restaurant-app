@@ -33,7 +33,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.session.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -101,20 +101,20 @@ CHANNEL_LAYERS = {
     },
 }
 
-# Email Settings
+# Email Settings (Unified for Hostinger)
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.hostinger.com")
 
-# Safe Port conversion to prevent 502/500 errors if user input has non-numeric text
+# Safe Port conversion
 raw_port = os.environ.get("EMAIL_PORT", "465")
 try:
-    # Remove any extra text like " (SSL)" if the user mistakenly copied it
     clean_port = "".join(filter(str.isdigit, str(raw_port)))
     EMAIL_PORT = int(clean_port) if clean_port else 465
 except Exception:
     EMAIL_PORT = 465
 
+# Defaults to Hostinger settings if environment variables are missing
 EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "False").strip().upper() == "TRUE"
 EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "True").strip().upper() == "TRUE"
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "").strip()
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "").strip()
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "testdev@zenarajaya.com").strip()
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "Zen@jaya_26").strip()
