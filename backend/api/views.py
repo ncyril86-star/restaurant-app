@@ -19,17 +19,20 @@ from asgiref.sync import async_to_sync
 def _get_db():
     """Return a Firestore client, initialising the app on first call."""
     if not firebase_admin._apps:
-        # 1. Try environment variable with raw JSON content (Best for Cloud/Render)
+        # 1. Try environment variable with raw JSON content
         cred_json = os.getenv("FIREBASE_CREDENTIALS_JSON")
+        print(f"🔍 DEBUG: FIREBASE_CREDENTIALS_JSON present: {bool(cred_json)}")
+        
         if cred_json:
             try:
-                # Initialize using the JSON string directly
                 from json import loads
                 cred_dict = loads(cred_json)
+                print(f"🔍 DEBUG: JSON type: {cred_dict.get('type')}")
                 cred = credentials.Certificate(cred_dict)
                 firebase_admin.initialize_app(cred)
+                print("✅ DEBUG: Firebase initialized from JSON env var")
             except Exception as e:
-                print(f"Error initializing Firebase from env var: {e}")
+                print(f"❌ DEBUG: Error initializing Firebase from env var: {e}")
         
         # 2. Fallback to service-account JSON file path
         if not firebase_admin._apps:
@@ -40,12 +43,13 @@ def _get_db():
                     "restaurant-2ef10-firebase-adminsdk-fbsvc-6887285a18.json",
                 ),
             )
+            print(f"🔍 DEBUG: checking file path: {sa_path}")
             if os.path.exists(sa_path):
+                print("✅ DEBUG: Found service-account file")
                 cred = credentials.Certificate(sa_path)
                 firebase_admin.initialize_app(cred)
             else:
-                # If everything fails, initialize without credentials for local dev
-                # (This will only work if running in a Google Cloud environment or local emulator)
+                print("⚠️ DEBUG: No credentials found, falling back to default (ADC)")
                 firebase_admin.initialize_app()
     return firestore.client()
 
