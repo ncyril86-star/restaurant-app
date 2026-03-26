@@ -1,20 +1,21 @@
 """
 Django settings for restaurant backend.
-Next.js (Firebase) stays as frontend; this API is for extra backend logic.
 """
 from pathlib import Path
 import os
 from dotenv import load_dotenv
 
+print("--- DEBUG: Starting to load settings.py ---")
+
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-change-in-production-use-env"
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-fallback-key")
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]  # dev only
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "daphne",
@@ -60,7 +61,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
 ASGI_APPLICATION = "config.asgi.application"
 
 DATABASES = {
@@ -70,12 +70,7 @@ DATABASES = {
     }
 }
 
-AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
-]
+AUTH_PASSWORD_VALIDATORS = []
 
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
@@ -83,29 +78,24 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Allow Next.js dev server to call this API
-CORS_ALLOW_ALL_ORIGINS = True  # dev only
+CORS_ALLOW_ALL_ORIGINS = True
 
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",
-    ],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
 }
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",  # dev only
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
 
-# Email Settings (Unified for Hostinger)
+# Email Settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.hostinger.com")
 
-# Safe Port conversion
 raw_port = os.environ.get("EMAIL_PORT", "465")
 try:
     clean_port = "".join(filter(str.isdigit, str(raw_port)))
@@ -113,8 +103,9 @@ try:
 except Exception:
     EMAIL_PORT = 465
 
-# Defaults to Hostinger settings if environment variables are missing
 EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "False").strip().upper() == "TRUE"
 EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "True").strip().upper() == "TRUE"
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "testdev@zenarajaya.com").strip()
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "Zen@jaya_26").strip()
+
+print(f"--- DEBUG: Settings loaded successfully (Port: {EMAIL_PORT}, User: {EMAIL_HOST_USER}) ---")
