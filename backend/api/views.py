@@ -342,20 +342,30 @@ def analytics(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def test_email(request):
-    """Diagnostic endpoint to test SMTP settings."""
+    """Enhanced Diagnostic endpoint to test SMTP settings and find hidden env keys."""
     from django.core.mail import send_mail
+    
+    # Key Finder: List environment keys starting with EMAIL, HOST, or SMTP
+    env_keys = sorted(os.environ.keys())
+    potential_keys = [k for k in env_keys if any(x in k.upper() for x in ["EMAIL", "HOST", "SMTP", "USER", "PASS"])]
+    
+    settings_debug = {
+        "EMAIL_HOST": settings.EMAIL_HOST,
+        "EMAIL_PORT": settings.EMAIL_PORT,
+        "EMAIL_USE_TLS": settings.EMAIL_USE_TLS,
+        "EMAIL_USE_SSL": settings.EMAIL_USE_SSL,
+        "EMAIL_HOST_USER": settings.EMAIL_HOST_USER,
+    }
+    
     if not getattr(settings, "EMAIL_HOST_USER", None) or not settings.EMAIL_HOST_USER:
-        return JsonResponse({"error": "EMAIL_HOST_USER is empty in settings"}, status=500)
+        return JsonResponse({
+            "error": "EMAIL_HOST_USER is empty in settings", 
+            "hint": "Check if your environment variable name has any leading/trailing spaces or typos.",
+            "available_env_keys": potential_keys,
+            "settings_detected": settings_debug
+        }, status=500)
     
     try:
-        settings_debug = {
-            "EMAIL_HOST": settings.EMAIL_HOST,
-            "EMAIL_PORT": settings.EMAIL_PORT,
-            "EMAIL_USE_TLS": settings.EMAIL_USE_TLS,
-            "EMAIL_USE_SSL": settings.EMAIL_USE_SSL,
-            "EMAIL_HOST_USER": settings.EMAIL_HOST_USER,
-        }
-        
         send_mail(
             subject="Diagnostic: MakanSedap SMTP Test",
             message="This is a test email from your MakanSedap backend. If you see this, SMTP is working!",
@@ -363,12 +373,18 @@ def test_email(request):
             recipient_list=[settings.EMAIL_HOST_USER],
             fail_silently=False,
         )
-        return JsonResponse({"success": True, "message": "Email sent!", "settings": settings_debug})
+        return JsonResponse({
+            "success": True, 
+            "message": "Email sent!", 
+            "settings": settings_debug,
+            "env_keys_found": potential_keys
+        })
     except Exception as e:
         import traceback
         return JsonResponse({
             "success": False, 
             "error": str(e), 
             "trace": traceback.format_exc(),
-            "settings": settings_debug
+            "settings": settings_debug,
+            "env_keys_found": potential_keys
         }, status=500)
