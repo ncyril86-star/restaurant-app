@@ -88,7 +88,7 @@ def check_env(request):
         "EMAIL_HOST_USER": "SET" if os.environ.get("EMAIL_HOST_USER") else "MISSING",
         "EMAIL_HOST_PASSWORD": "SET" if os.environ.get("EMAIL_HOST_PASSWORD") else "MISSING",
         "PYTHON_VERSION": os.environ.get("PYTHON_VERSION", "unknown"),
-        "ENV_KEYS": list(os.environ.keys())[:10]  # Show some keys to verify env is being read
+        "ALL_ENV_KEYS": sorted(list(os.environ.keys()))
     }
     return JsonResponse(results)
 
