@@ -58,10 +58,6 @@ export default function AdminDashboard() {
   const router = useRouter();
 
   const API = process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://localhost:8000';
-  
-  useEffect(() => {
-    console.log('Admin Dashboard API URL:', API);
-  }, [API]);
 
   // Reviews State
   const [reviews, setReviews] = useState<any[]>([]);
