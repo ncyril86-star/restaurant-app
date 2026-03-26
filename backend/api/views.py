@@ -203,6 +203,8 @@ def mark_order_paid(request, order_id):
             order_data = doc.to_dict()
             customer_email = order_data.get("customerEmail") or data.get("customerEmail")
             
+            print(f"📧 Attempting email: to={customer_email}, from={settings.EMAIL_HOST_USER}")
+
             if customer_email and settings.EMAIL_HOST_USER:
                 items_list = order_data.get("items", [])
                 
@@ -245,7 +247,7 @@ def mark_order_paid(request, order_id):
                       <p style="margin: 0; color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Order ID</p>
                       <p style="margin: 8px 0 0 0; color: #0f172a; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 15px;">{order_id}</p>
                     </div>
-
+                    
                     <h3 style="color: #0f172a; margin-bottom: 20px; font-size: 18px; font-weight: 700; padding-left: 8px;">Order Summary</h3>
                     
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 32px;">
@@ -255,7 +257,7 @@ def mark_order_paid(request, order_id):
                         <td style="padding: 24px 16px; text-align: right; color: #f59e0b; font-weight: 800; font-size: 20px;">RM {total:.2f}</td>
                       </tr>
                     </table>
-
+                    
                     <div style="text-align: center; margin-top: 40px; padding-top: 32px; border-top: 2px dashed #e2e8f0;">
                       <p style="color: #334155; font-size: 16px; font-weight: 600; margin: 0;">Your food is currently being prepared! 🍳</p>
                       <p style="color: #94a3b8; font-size: 14px; margin-top: 12px; margin-bottom: 0;">Thank you for dining with MakanSedap.</p>
@@ -270,12 +272,16 @@ def mark_order_paid(request, order_id):
                     message=msg,
                     from_email=settings.EMAIL_HOST_USER,
                     recipient_list=[customer_email],
-                    fail_silently=True,
+                    fail_silently=False,  # Set to False to see errors in logs
                     html_message=html_msg,
                 )
-                print(f"📧 Sent email receipt to {customer_email}")
+                print(f"✅ Success: Email sent to {customer_email}")
+            else:
+                print(f"⚠️ Email skipped: Missing email or EMAIL_HOST_USER")
         except Exception as email_err:
-            print("Failed to send email receipt:", email_err)
+            import traceback
+            print(f"❌ Failed to send email receipt: {email_err}")
+            traceback.print_exc()
 
         return JsonResponse({"success": True, "orderId": order_id, "status": "paid"})
 
@@ -340,3 +346,22 @@ def analytics(request):
     }
 
     return JsonResponse(analytics_data)
+
+@api_view(['GET'])
+def test_email(request):
+    """Diagnostic endpoint to test SMTP settings."""
+    from django.core.mail import send_mail
+    if not getattr(settings, "EMAIL_HOST_USER", None):
+        return JsonResponse({"error": "EMAIL_HOST_USER not configured"}, status=500)
+    
+    try:
+        send_mail(
+            subject="Diagnostic: MakanSedap SMTP Test",
+            message="This is a test email from your MakanSedap backend. If you see this, SMTP is working!",
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[settings.EMAIL_HOST_USER],
+            fail_silently=False,
+        )
+        return JsonResponse({"success": True, "message": f"Test email sent to {settings.EMAIL_HOST_USER}"})
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)

@@ -40,8 +40,6 @@ type AnalyticsData = {
 
 /* ───────────────────── Fetch helper ───────────────────── */
 
-const API = 'http://localhost:8000';
-
 const fetchWithAuth = async (url: string) => {
   const user = auth.currentUser;
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -58,6 +56,12 @@ const fetchWithAuth = async (url: string) => {
 
 export default function AdminDashboard() {
   const router = useRouter();
+
+  const API = process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://localhost:8000';
+  
+  useEffect(() => {
+    console.log('Admin Dashboard API URL:', API);
+  }, [API]);
 
   // Reviews State
   const [reviews, setReviews] = useState<any[]>([]);
@@ -77,10 +81,10 @@ export default function AdminDashboard() {
 
   // SWR data
   const { data: items = [], isLoading: loadingItems, mutate: mutateMenu } =
-    useSWR<MenuItem[]>(`${API}/api/menu/`, fetchWithAuth, { refreshInterval: 10000 });
+    useSWR<MenuItem[]>(API ? `${API}/api/menu/` : null, fetchWithAuth, { refreshInterval: 10000 });
 
   const { data: analytics = {}, mutate: mutateAnalytics } =
-    useSWR<AnalyticsData>(`${API}/api/analytics/`, fetchWithAuth, { refreshInterval: 10000 });
+    useSWR<AnalyticsData>(API ? `${API}/api/analytics/` : null, fetchWithAuth, { refreshInterval: 10000 });
 
   // 🔥 WebSocket (optional – falls back to SWR polling)
   useEffect(() => {
@@ -90,7 +94,8 @@ export default function AdminDashboard() {
     const connect = () => {
       if (!isMounted) return;
       try {
-        socket = new WebSocket('ws://localhost:8000/ws/dashboard/');
+        const wsUrl = process.env.NEXT_PUBLIC_DJANGO_WS_URL || 'ws://localhost:8000';
+        socket = new WebSocket(`${wsUrl}/ws/dashboard/`);
         socket.onmessage = () => { mutateMenu(); mutateAnalytics(); };
         socket.onerror = () => { };
         socket.onclose = () => { if (isMounted) reconnectTimer = setTimeout(connect, 5000); };

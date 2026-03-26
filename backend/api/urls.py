@@ -9,4 +9,5 @@ urlpatterns = [
     path("orders/<str:order_id>/", views.order_detail),
     path("orders/<str:order_id>/pay/", views.mark_order_paid),
     path("analytics/", views.analytics),
+    path("test-email/", views.test_email),
 ]

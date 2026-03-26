@@ -45,13 +45,18 @@ function ViewOrderPage() {
   }, [searchParams]);
 
   useEffect(() => {
-    if (!currentOrderId && typeof window !== 'undefined') {
+    const urlId = searchParams.get('orderId');
+    // If urlId is explicitly '', it means user wants a fresh start
+    if (urlId === '') {
+      setCurrentOrderId('');
+      if (typeof window !== 'undefined') localStorage.removeItem('currentOrderId');
+    } else if (!currentOrderId && typeof window !== 'undefined') {
       const stored = localStorage.getItem('currentOrderId');
       if (stored) {
         setCurrentOrderId(stored);
       }
     }
-  }, [currentOrderId]);
+  }, [currentOrderId, searchParams]);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -65,8 +70,17 @@ function ViewOrderPage() {
         const snap = await getDoc(ref);
         if (!snap.exists()) {
           setOrder(null);
+          if (typeof window !== 'undefined') localStorage.removeItem('currentOrderId');
         } else {
-          setOrder({ id: snap.id, ...snap.data() });
+          const data = snap.data() as any;
+          // If the order is already paid, do not show it as an active cart!
+          if (data.status === 'paid') {
+            setOrder(null);
+            setCurrentOrderId('');
+            if (typeof window !== 'undefined') localStorage.removeItem('currentOrderId');
+            return;
+          }
+          setOrder({ id: snap.id, ...data });
           try { if (typeof window !== 'undefined') localStorage.setItem('currentOrderId', snap.id); } catch {}
         }
       } catch (error) {

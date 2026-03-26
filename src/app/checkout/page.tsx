@@ -112,6 +112,10 @@ function CheckoutPage() {
 
       // Redirect the user to the secure Stripe payment screen
       if (data.url) {
+        // Clear local order state BEFORE leaving so a new order starts next time
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('currentOrderId');
+        }
         window.location.href = data.url; 
       }
       

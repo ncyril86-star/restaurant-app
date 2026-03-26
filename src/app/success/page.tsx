@@ -17,8 +17,14 @@ function SuccessPage() {
   const [loading, setLoading] = useState(true);
   const [authReady, setAuthReady] = useState(false);
 
-  // Ensure Firebase Auth is initialized
+  // Ensure Firebase Auth is initialized and clear order from localStorage immediately
   useEffect(() => {
+    // 1. Immediately clear the currentOrderId so they don't reuse it by accident
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('currentOrderId');
+    }
+
+    // 2. Auth handling
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) {
         signInAnonymously(auth).catch(() => {});
@@ -54,13 +60,11 @@ function SuccessPage() {
             });
             if (res.ok) {
               console.log('✅ Order marked as paid via backend');
-              if (typeof window !== 'undefined') localStorage.removeItem('currentOrderId');
             } else {
               console.error('❌ Failed to mark as paid API:', await res.text());
             }
           } else {
             // Order was already paid
-            if (typeof window !== 'undefined') localStorage.removeItem('currentOrderId');
           }
         }
       } catch (err: any) {

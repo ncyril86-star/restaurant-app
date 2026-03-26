@@ -89,14 +89,26 @@ function MenuPage() {
   useEffect(() => {
     const loadOrderToCart = async () => {
       try {
-        const stored = searchParams.get('orderId') || (typeof window !== 'undefined' ? localStorage.getItem('currentOrderId') : '') || '';
-        if (!stored) return;
+        const urlId = searchParams.get('orderId');
+        // If urlId is explicitly '', it means user wants a fresh start (e.g., from "Order Again")
+        // If urlId is null, it means the param is missing, so we check localStorage
+        const stored = urlId === '' ? '' : (urlId || (typeof window !== 'undefined' ? localStorage.getItem('currentOrderId') : '') || '');
+        
+        if (!stored) {
+          setCart({});
+          setCurrentOrderId('');
+          if (typeof window !== 'undefined') localStorage.removeItem('currentOrderId');
+          return;
+        }
         
         setCurrentOrderId(stored);
         
         const ref = doc(db, 'orders', stored);
         const snap = await getDoc(ref);
-        if (!snap.exists()) return;
+        if (!snap.exists()) {
+          if (typeof window !== 'undefined') localStorage.removeItem('currentOrderId');
+          return;
+        }
         const data = snap.data() as any;
         
         // If the order is already paid, DO NOT load it into the cart! 
