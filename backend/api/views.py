@@ -347,7 +347,8 @@ def analytics(request):
 
     return JsonResponse(analytics_data)
 
-@api_view(['GET'])
+@csrf_exempt
+@require_http_methods(["GET"])
 def test_email(request):
     """Diagnostic endpoint to test SMTP settings."""
     from django.core.mail import send_mail
