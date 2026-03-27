@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, useRef, Suspense } from 'react';
-import { ChefHat, Utensils, ShoppingCart, Headset } from 'lucide-react';
+import { ChefHat, Utensils, ShoppingCart, Headset, Menu, X } from 'lucide-react';
 import { MapPin, Phone, Mail } from 'lucide-react';
 
 function LandingPage() {
@@ -15,6 +15,7 @@ function LandingPage() {
     about: false,
     footer: false,
   });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -170,15 +171,16 @@ function LandingPage() {
             <img
               src="https://images.unsplash.com/photo-1644920437956-388353e26e28?q=80&w=627&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
               alt="MakanSedap Logo"
-              className="h-9 w-9 rounded-xl object-cover"
+              className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl object-cover"
             />
             <div className="leading-tight">
-              <p className="text-sm font-semibold tracking-wide text-amber-300">
+              <p className="text-sm font-bold tracking-tight text-amber-300">
                 MakanSedap
               </p>
             </div>
           </div>
 
+          {/* Desktop Nav */}
           <nav className="hidden items-center gap-6 text-sm text-white/80 md:flex">
             <a className="hover:text-white transition-colors" href="#home">Home</a>
             <a className="hover:text-white transition-colors" href="#about">About</a>
@@ -190,7 +192,6 @@ function LandingPage() {
                 className="hover:text-white flex items-center gap-1 transition-colors"
               >
                 Menu
-                {/* Chevron Icon */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 w-4 transition-transform duration-300 group-hover:rotate-180"
@@ -200,49 +201,55 @@ function LandingPage() {
                   <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
               </Link>
-
-              {/* Dropdown Content */}
               <div className="absolute left-0 top-full mt-1 w-48 rounded-xl border border-white/10 bg-[#0b0f19]/95 backdrop-blur-md shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top scale-95 group-hover:scale-100">
                 <div className="py-2 flex flex-col">
-                  <Link
-                    href={`/menu?category=main`}
-                    className="px-4 py-2 text-white/70 hover:bg-white/10 hover:text-amber-300 transition-colors"
-                  >
-                    Main Dish
-                  </Link>
-                  <Link
-                    href={`/menu?category=dessert`}
-                    className="px-4 py-2 text-white/70 hover:bg-white/10 hover:text-amber-300 transition-colors"
-                  >
-                    Desserts
-                  </Link>
-                  <Link
-                    href={`/menu?category=drinks`}
-                    className="px-4 py-2 text-white/70 hover:bg-white/10 hover:text-amber-300 transition-colors"
-                  >
-                    Drinks
-                  </Link>
+                  <Link href="/menu?category=main" className="px-4 py-2 text-white/70 hover:bg-white/10 hover:text-amber-300 transition-colors">Main Dish</Link>
+                  <Link href="/menu?category=dessert" className="px-4 py-2 text-white/70 hover:bg-white/10 hover:text-amber-300 transition-colors">Desserts</Link>
+                  <Link href="/menu?category=drinks" className="px-4 py-2 text-white/70 hover:bg-white/10 hover:text-amber-300 transition-colors">Drinks</Link>
                 </div>
               </div>
             </div>
 
             <a className="hover:text-white transition-colors" href="#contact">Contact</a>
-
             <Link className="hover:text-white transition-colors" href="/reviews">Reviews</Link>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link
-              href={`/view-order`}
-              className="rounded-full bg-amber-400 px-4 py-2 text-sm font-extrabold text-black shadow-[0_10px_30px_rgba(245,158,11,0.25)] hover:bg-amber-300 transition-colors flex items-center gap-2"
+              href="/view-order"
+              className="rounded-full bg-amber-400 px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-black text-black shadow-lg shadow-amber-500/20 hover:bg-amber-300 transition-all flex items-center gap-2"
             >
-              View Order
+              Order
               {Object.values(cart).reduce((a, b) => a + b, 0) > 0 && (
-                <span className="inline-flex items-center justify-center rounded-full bg-black/20 px-2 py-0.5 text-xs font-bold text-black border border-black/10">
+                <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-black/10 text-[9px] font-black">
                   {Object.values(cart).reduce((a, b) => a + b, 0)}
                 </span>
               )}
             </Link>
+
+            {/* Mobile Toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-white/70 border border-white/10 md:hidden hover:bg-white/10 transition-colors"
+            >
+              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu Overlay */}
+        <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out border-t border-white/5 bg-[#0b0f19]/95 backdrop-blur-xl ${mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className="flex flex-col gap-4 p-6 lowercase font-bold tracking-tight">
+            <a onClick={() => setMobileMenuOpen(false)} href="#home" className="text-lg text-white/60 hover:text-amber-400 transition-colors">home</a>
+            <a onClick={() => setMobileMenuOpen(false)} href="#about" className="text-lg text-white/60 hover:text-amber-400 transition-colors">about</a>
+            <div className="flex flex-col gap-2 pl-4 border-l border-white/10">
+              <Link onClick={() => setMobileMenuOpen(false)} href="/menu" className="text-lg text-amber-400">menu</Link>
+              <Link onClick={() => setMobileMenuOpen(false)} href="/menu?category=main" className="text-sm text-white/40">main dishes</Link>
+              <Link onClick={() => setMobileMenuOpen(false)} href="/menu?category=dessert" className="text-sm text-white/40">desserts</Link>
+              <Link onClick={() => setMobileMenuOpen(false)} href="/menu?category=drinks" className="text-sm text-white/40">drinks</Link>
+            </div>
+            <Link onClick={() => setMobileMenuOpen(false)} href="/reviews" className="text-lg text-white/60 hover:text-amber-400 transition-colors">reviews</Link>
+            <a onClick={() => setMobileMenuOpen(false)} href="#contact" className="text-lg text-white/60 hover:text-amber-400 transition-colors">contact</a>
           </div>
         </div>
       </header>
@@ -250,33 +257,31 @@ function LandingPage() {
       {/* Hero - Full Screen */}
       <section
         id="home"
-        className="relative overflow-hidden min-h-screen flex items-center"
+        className="relative overflow-hidden min-h-[calc(100vh-64px)] sm:min-h-screen flex items-center pt-20 sm:pt-0"
         data-section="hero"
       >
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center opacity-50" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0b0f19] via-[#0b0f19]/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0b0f19] via-[#0b0f19]/95 to-transparent sm:via-[#0b0f19]/80" />
 
-          <div className="absolute -left-24 -top-24 h-80 w-80 rounded-full bg-amber-500/20 blur-3xl" />
-          <div className="absolute -right-24 top-24 h-80 w-80 rounded-full bg-orange-600/20 blur-3xl" />
+          <div className="absolute -left-24 -top-24 h-80 w-80 rounded-full bg-amber-500/10 blur-3xl" />
+          <div className="absolute -right-24 top-24 h-80 w-80 rounded-full bg-orange-600/10 blur-3xl" />
         </div>
 
-        <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 w-full lg:grid-cols-2 lg:items-center">
+        <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 w-full lg:grid-cols-2 lg:items-center py-12 sm:py-20">
           <div
             className={`animate-slide-left ${visibleSections.hero ? 'visible' : ''}`}
             style={{ animationDelay: visibleSections.hero ? '0.1s' : '0s' }}
           >
-            <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80">
+            <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] sm:text-xs font-semibold text-white/80">
               Enjoy Hundreds Of Flavors Under One Roof
             </p>
-            <h1 className="mt-6 text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-              Enjoy Hundreds Of
-              <br />
-              Flavors Under One
-              <br />
-              Roof
+            <h1 className="mt-6 text-3xl font-black leading-[1.1] tracking-tighter sm:text-5xl lg:text-7xl lowercase">
+              enjoy hundreds of
+              <span className="block text-amber-400">flavors under</span>
+              one roof
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-8 text-white/70">
+            <p className="mt-6 max-w-xl text-sm sm:text-base leading-relaxed text-white/60">
               Discover chef-crafted dishes, quick ordering, and a smooth dining
               experience. Browse the menu, place your order, and we'll handle the
               rest.
@@ -303,19 +308,19 @@ function LandingPage() {
             style={{ animationDelay: visibleSections.hero ? '0.3s' : '0s' }}
           >
             <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-neutral-900/70 backdrop-blur-xl">
-              <div className="grid grid-cols-5">
-                <div className="col-span-2 p-6">
-                  <p className="text-xs font-semibold text-white/70">Today's pick</p>
-                  <p className="mt-3 text-lg font-bold">Signature Sets</p>
-                  <p className="mt-2 text-sm text-white/70">
+              <div className="grid grid-cols-1 sm:grid-cols-5">
+                <div className="p-6 sm:col-span-2">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-amber-500/80">Today's pick</p>
+                  <p className="mt-3 text-xl font-black lowercase tracking-tighter">Signature Sets</p>
+                  <p className="mt-2 text-xs leading-relaxed text-white/50">
                     Popular combos, ready in minutes.
                   </p>
-                  <div className="mt-6 inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm border border-white/10">
+                  <div className="mt-6 inline-flex rounded-full bg-white/5 px-3 py-1 text-[10px] font-bold text-white/40 backdrop-blur-sm border border-white/10 italic">
                     Fresh • Hot • Fast
                   </div>
                 </div>
-                <div className="col-span-3">
-                  <div className="aspect-[4/3] w-full bg-[linear-gradient(120deg,rgba(245,158,11,0.25),rgba(249,115,22,0.15)),url('https://images.unsplash.com/photo-1633271333045-d6cd23567743?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center" />
+                <div className="sm:col-span-3">
+                  <div className="aspect-video sm:aspect-[4/3] w-full bg-[linear-gradient(120deg,rgba(245,158,11,0.25),rgba(249,115,22,0.15)),url('https://images.unsplash.com/photo-1633271333045-d6cd23567743?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center" />
                 </div>
               </div>
             </div>
@@ -385,21 +390,21 @@ function LandingPage() {
         data-section="about"
       >
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 lg:grid-cols-2 lg:items-center">
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div
               className={`overflow-hidden rounded-2xl border border-white/10 bg-white/5 animate-scale glow-animation antigravity ${visibleSections.about ? 'visible' : ''}`}
               style={{ animationDelay: visibleSections.about ? '0.1s' : '0s' }}
             >
-              <div className="aspect-[4/3] w-full bg-[url('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center transition-transform duration-500 hover:scale-110" />
+              <div className="aspect-video sm:aspect-[4/3] w-full bg-[url('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center transition-transform duration-500 hover:scale-110" />
             </div>
             <div
               className={`overflow-hidden rounded-2xl border border-white/10 bg-white/5 animate-scale glow-animation antigravity-slow ${visibleSections.about ? 'visible' : ''}`}
               style={{ animationDelay: visibleSections.about ? '0.2s' : '0s' }}
             >
-              <div className="aspect-[4/3] w-full bg-[url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center transition-transform duration-500 hover:scale-110" />
+              <div className="aspect-video sm:aspect-[4/3] w-full bg-[url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center transition-transform duration-500 hover:scale-110" />
             </div>
             <div
-              className={`col-span-2 overflow-hidden rounded-2xl border border-white/10 bg-white/5 animate-scale glow-animation antigravity-fast ${visibleSections.about ? 'visible' : ''}`}
+              className={`sm:col-span-2 overflow-hidden rounded-2xl border border-white/10 bg-white/5 animate-scale glow-animation antigravity-fast ${visibleSections.about ? 'visible' : ''}`}
               style={{ animationDelay: visibleSections.about ? '0.3s' : '0s' }}
             >
               <div className="aspect-[16/7] w-full bg-[url('https://images.unsplash.com/photo-1572715376701-98568319fd0b?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center transition-transform duration-500 hover:scale-110" />
@@ -410,29 +415,29 @@ function LandingPage() {
             className={`animate-slide-left ${visibleSections.about ? 'visible' : ''}`}
             style={{ animationDelay: visibleSections.about ? '0.2s' : '0s' }}
           >
-            <p className="text-base font-semibold text-amber-300">About Us</p>
-            <h2 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
-              Welcome to <span className="text-amber-300">MakanSedap</span>
+            <p className="text-xs sm:text-base font-bold uppercase tracking-widest text-amber-500/80">About Us</p>
+            <h2 className="mt-4 text-3xl font-black leading-tight tracking-tighter sm:text-5xl lg:text-6xl lowercase">
+              Welcome to <span className="text-amber-400">MakanSedap</span>
             </h2>
-            <p className="mt-6 text-base leading-8 text-white/70">
+            <p className="mt-6 text-sm sm:text-base leading-relaxed text-white/50">
               We take pride in our culinary diversity, bringing Western and traditional cuisines together on a single menu. Whether you're craving the bold,
               rustic spices of a local heritage dish or the refined, savory pull of a Western classic, our kitchen strikes the perfect balance between the familiar and the global.
             </p>
 
-            <div className="mt-10 grid grid-cols-2 gap-6">
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div
                 className={`rounded-2xl border border-white/10 bg-white/5 p-6 animate-rotate feature-card antigravity-fast ${visibleSections.about ? 'visible' : ''}`}
                 style={{ animationDelay: visibleSections.about ? '0.3s' : '0s' }}
               >
-                <p className="text-4xl font-extrabold text-amber-300">10</p>
-                <p className="mt-2 text-base font-semibold">Years Experience</p>
+                <p className="text-3xl sm:text-4xl font-black text-amber-400">10</p>
+                <p className="mt-1 text-xs font-bold uppercase tracking-widest text-white/40">Years Experience</p>
               </div>
               <div
                 className={`rounded-2xl border border-white/10 bg-white/5 p-6 animate-rotate feature-card antigravity-slow ${visibleSections.about ? 'visible' : ''}`}
                 style={{ animationDelay: visibleSections.about ? '0.4s' : '0s' }}
               >
-                <p className="text-4xl font-extrabold text-amber-300">15</p>
-                <p className="mt-2 text-base font-semibold">Master Chefs</p>
+                <p className="text-3xl sm:text-4xl font-black text-amber-400">15</p>
+                <p className="mt-1 text-xs font-bold uppercase tracking-widest text-white/40">Master Chefs</p>
               </div>
             </div>
 
