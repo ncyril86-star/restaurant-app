@@ -524,30 +524,6 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Weekly Trend (Daily Orders) */}
-              <div className="rounded-2xl border border-white/10 bg-[#0d1117] p-6 shadow-xl">
-                <h3 className="text-sm font-bold text-white mb-6 flex items-center gap-2">
-                  <BarChart3 size={16} className="text-emerald-400" />
-                  Order Volume Trend (Weekly)
-                </h3>
-                <ResponsiveContainer width="100%" height={250}>
-                  <AreaChart data={analytics.daily_orders || []}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" />
-                    <YAxis stroke="rgba(255,255,255,0.3)" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1a1f2e', border: 'none', borderRadius: '12px' }} />
-                    <Area type="monotone" dataKey="count" stroke="#10b981" fillOpacity={1} fill="url(#emeraldGrad)" />
-                    <defs>
-                      <linearGradient id="emeraldGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          )}
 
           {/* ═══════════ MENU TAB ═══════════ */}
           {currentTab === 'menu' && (
