@@ -524,6 +524,8 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
+            </div>
+          )}
 
           {/* ═══════════ MENU TAB ═══════════ */}
           {currentTab === 'menu' && (
