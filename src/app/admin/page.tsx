@@ -14,7 +14,7 @@ import {
   TrendingUp, Users, DollarSign, ShoppingCart,
   Menu as MenuIcon, LogOut, Home, Settings, Plus,
   Pencil, Trash2, X, Check, ChefHat, Package,
-  BarChart3, Eye, EyeOff, Search, LayoutDashboard, MessageSquare
+  BarChart3, Eye, EyeOff, Search, LayoutDashboard, MessageSquare, Star
 } from 'lucide-react';
 
 /* ───────────────────────── Types ───────────────────────── */
@@ -671,39 +671,121 @@ export default function AdminDashboard() {
               <div className="bg-[#0f1724] rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left bg-transparent">
-                    <thead className="bg-[#141f30] border-b border-white/10">
+                    <thead className="bg-[#141f30] border-b border-white/10 text-[10px] uppercase font-bold text-white/40 tracking-widest">
                       <tr>
-                        <th className="px-6 py-4 text-xs font-semibold text-white/60 tracking-wider">CUSTOMER & DATE</th>
-                        <th className="px-6 py-4 text-xs font-semibold text-white/60 tracking-wider">RATING</th>
-                        <th className="px-6 py-4 text-xs font-semibold text-white/60 tracking-wider">REVIEW</th>
+                        <th className="px-6 py-4">Customer & Feedback</th>
+                        <th className="px-6 py-4">Order Context</th>
+                        <th className="px-6 py-4">Order Bill</th>
+                        <th className="px-6 py-4 text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/10">
-                      {reviews.map((review) => (
-                        <tr key={review.id} className={`hover:bg-white/[0.02] transition-colors ${review.status === 'hidden' ? 'opacity-50' : ''}`}>
-                          <td className="px-6 py-4">
-                            <div className="font-medium text-white">{review.customerName || 'Anonymous'}</div>
-                            <div className="text-xs text-white/40 mt-1">
-                              {review.createdAt?.toDate ? new Date(review.createdAt.toDate()).toLocaleDateString() : 'Just now'}
+                      {reviews.length === 0 ? (
+                         <tr>
+                            <td colSpan={4} className="px-6 py-20 text-center text-white/20">
+                                <MessageSquare size={40} className="mx-auto mb-2 opacity-10" />
+                                <p>No reviews found</p>
+                            </td>
+                         </tr>
+                      ) : reviews.map((review) => (
+                        <tr key={review.id} className="hover:bg-white/[0.02] transition-colors group">
+                          {/* Customer & Feedback */}
+                          <td className="px-6 py-6 border-r border-white/5 min-w-[300px]">
+                            <div className="flex items-start gap-4">
+                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 border border-amber-400/20">
+                                <MessageSquare size={18} className="text-amber-400" />
+                              </div>
+                              <div className="space-y-3">
+                                <div>
+                                  <p className="font-bold text-white leading-none">{review.customerName || 'Anonymous'}</p>
+                                  <p className="text-[10px] text-white/30 mt-1.5 uppercase font-bold tracking-wider">
+                                     Posted: {review.createdAt?.toDate ? new Date(review.createdAt.toDate()).toLocaleString() : 'Just now'}
+                                  </p>
+                                </div>
+                                <div className="flex gap-0.5">
+                                  {[1, 2, 3, 4, 5].map(s => (
+                                    <Star key={s} size={12} className={s <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-white/10'} />
+                                  ))}
+                                </div>
+                                <div className="relative">
+                                  <p className="text-sm text-white/80 leading-relaxed italic bg-white/5 p-4 rounded-2xl border border-white/5">
+                                    "{review.text}"
+                                  </p>
+                                </div>
+                              </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4">
-                            <div className="flex text-amber-400 text-sm">
-                              {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
-                            </div>
+
+                          {/* Order Context */}
+                          <td className="px-6 py-6 border-r border-white/5">
+                             {review.orderId ? (
+                               <div className="space-y-4">
+                                  <div className="flex items-center gap-2">
+                                     <div className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
+                                     <span className="text-[10px] font-mono text-white/40 uppercase font-bold tracking-widest">ORDER #{review.orderId.substring(0, 8)}</span>
+                                  </div>
+                                  <div className="space-y-1.5">
+                                     <p className="text-[10px] text-white/20 uppercase font-black tracking-[0.2em]">Items Purchased</p>
+                                     <div className="flex flex-wrap gap-2">
+                                        {(review.orderItems || []).map((it: any, k: number) => (
+                                          <div key={k} className="flex items-center gap-2 rounded-lg bg-white/5 border border-white/10 px-2.5 py-1.5 transition-all hover:bg-white/10">
+                                            <span className="text-[10px] font-bold text-amber-400">{it.qty}x</span>
+                                            <span className="text-[10px] font-medium text-white/70">{it.name}</span>
+                                          </div>
+                                        ))}
+                                     </div>
+                                  </div>
+                                  <div className="pt-3 border-t border-white/5">
+                                     <p className="text-[10px] text-white/20 uppercase font-black tracking-[0.2em] mb-1.5">Original Transaction</p>
+                                     <div className="flex items-center gap-2 text-white/60">
+                                        <TrendingUp size={12} className="text-emerald-400" />
+                                        <p className="text-[11px] font-medium">
+                                           {review.orderCreatedAt?.toDate ? new Date(review.orderCreatedAt.toDate()).toLocaleString() : 'N/A'}
+                                        </p>
+                                     </div>
+                                  </div>
+                               </div>
+                             ) : (
+                               <div className="flex flex-col items-center justify-center h-32 text-white/10 border-2 border-dashed border-white/5 rounded-2xl p-4 bg-white/[0.01]">
+                                  <Users size={24} strokeWidth={1.5} className="mb-2" />
+                                  <span className="text-[10px] uppercase font-black tracking-[0.2em]">External Feedback</span>
+                               </div>
+                             )}
                           </td>
-                          <td className="px-6 py-4 max-w-sm">
-                            <p className="text-sm text-white/80 truncate">{review.text}</p>
+
+                          {/* Order Bill */}
+                          <td className="px-6 py-6 bg-white/[0.01]">
+                             {review.orderId ? (
+                               <div className="space-y-4">
+                                  <div className="space-y-2.5">
+                                      {(review.orderItems || []).map((it: any, k: number) => (
+                                          <div key={k} className="flex justify-between text-[11px]">
+                                              <span className="text-white/40">{it.name}</span>
+                                              <span className="font-mono font-bold text-white/70">RM {(it.price * it.qty).toFixed(2)}</span>
+                                          </div>
+                                      ))}
+                                  </div>
+                                  <div className="pt-3 border-t border-amber-400/20 flex justify-between items-center">
+                                      <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.15em]">Total Amount</span>
+                                      <span className="text-lg font-black text-amber-400 drop-shadow-lg">RM {Number(review.orderTotal || 0).toFixed(2)}</span>
+                                  </div>
+                               </div>
+                             ) : (
+                               <div className="h-full flex items-center justify-center italic text-white/10 text-xs">
+                                  No transaction data
+                               </div>
+                             )}
+                          </td>
+                        
+                          <td className="px-6 py-6 text-right">
+                             <div className="flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                               <button className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-white/40 border border-white/10 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 transition-all">
+                                  <Trash2 size={16} />
+                               </button>
+                             </div>
                           </td>
                         </tr>
                       ))}
-                      {reviews.length === 0 && (
-                        <tr>
-                          <td colSpan={3} className="px-6 py-12 text-center text-white/40">
-                            No reviews found.
-                          </td>
-                        </tr>
-                      )}
                     </tbody>
                   </table>
                 </div>

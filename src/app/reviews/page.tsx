@@ -3,15 +3,20 @@
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, where } from 'firebase/firestore';
-import { Star, MessageSquarePlus, User, Loader2 } from 'lucide-react';
+import { Star, MessageSquarePlus, User, Loader2, Receipt } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { doc, getDoc } from 'firebase/firestore';
+import { Suspense } from 'react';
 
-export default function ReviewsPage() {
+function ReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [cart, setCart] = useState<{ [key: string]: number }>({});
-  const orderId = ''; // Default empty for navigation links
+  
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get('orderId');
   
   // Modal State
   const [name, setName] = useState('');
@@ -20,6 +25,7 @@ export default function ReviewsPage() {
   const [hoverRating, setHoverRating] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+  const [linkedOrder, setLinkedOrder] = useState<any>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -29,6 +35,27 @@ export default function ReviewsPage() {
       }
     }
   }, []);
+
+  // Fetch linked order if orderId is present
+  useEffect(() => {
+    if (orderId) {
+      const fetchOrder = async () => {
+        try {
+          const docRef = doc(db, 'orders', orderId);
+          const snap = await getDoc(docRef);
+          if (snap.exists()) {
+            const data = snap.data();
+            setLinkedOrder({ id: snap.id, ...data });
+            if (data.customerName) setName(data.customerName);
+            setShowModal(true); // Auto-open modal if linked to an order
+          }
+        } catch (err) {
+          console.error('Failed to fetch order for review:', err);
+        }
+      };
+      fetchOrder();
+    }
+  }, [orderId]);
 
   useEffect(() => {
     // Only fetch reviews that are NOT hidden
@@ -57,13 +84,23 @@ export default function ReviewsPage() {
     
     setSubmitting(true);
     try {
-      await addDoc(collection(db, 'reviews'), {
+      const reviewData: any = {
         customerName: name.trim() || 'Anonymous',
         rating,
         text: text.trim(),
         status: 'published',
         createdAt: serverTimestamp(),
-      });
+      };
+
+      // If linked to an order, include order metadata
+      if (linkedOrder) {
+        reviewData.orderId = linkedOrder.id;
+        reviewData.orderItems = linkedOrder.items || [];
+        reviewData.orderTotal = linkedOrder.total || 0;
+        reviewData.orderCreatedAt = linkedOrder.createdAt || null;
+      }
+
+      await addDoc(collection(db, 'reviews'), reviewData);
       setShowModal(false);
       setName('');
       setText('');
@@ -316,5 +353,17 @@ export default function ReviewsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ReviewsPageWrapper() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#0a0f18] flex items-center justify-center">
+        <Loader2 className="w-10 h-10 text-amber-400 animate-spin" />
+      </div>
+    }>
+      <ReviewsPage />
+    </Suspense>
   );
 }

@@ -244,7 +244,7 @@ function SuccessPage() {
         {/* Action buttons */}
         <div className="mt-8 flex flex-col sm:flex-row gap-3">
           <Link
-            href="/reviews"
+            href={`/reviews?orderId=${orderId}`}
             className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 px-6 py-3 text-sm font-bold text-black hover:from-emerald-300 hover:to-teal-400 transition-all shadow-lg shadow-emerald-500/20"
           >
             Leave a Review
