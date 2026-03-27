@@ -268,11 +268,16 @@ def mark_order_paid(request, order_id):
         data = json.loads(request.body) if request.body else {}
         from google.cloud.firestore import SERVER_TIMESTAMP
 
+        pm = data.get("paymentMethod", "stripe")
+        status = "paid"
+        if pm == "counter":
+            status = "pending_counter"
+
         doc_ref.update({
-            "status": "paid",
-            "paidAt": SERVER_TIMESTAMP,
+            "status": status,
+            "paidAt": SERVER_TIMESTAMP if status == "paid" else None,
             "stripeSessionId": data.get("stripeSessionId", ""),
-            "paymentMethod": data.get("paymentMethod", "stripe"),
+            "paymentMethod": pm,
         })
 
         # Try to send an email receipt in a background thread

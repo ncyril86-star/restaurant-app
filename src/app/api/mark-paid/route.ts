@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { orderId, sessionId, email } = await request.json();
+    const { orderId, sessionId, email, paymentMethod } = await request.json();
 
     if (!orderId) {
       return NextResponse.json({ error: 'Order ID is required' }, { status: 400 });
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         stripeSessionId: sessionId || '',
-        paymentMethod: 'stripe',
+        paymentMethod: paymentMethod || 'stripe',
         customerEmail: email || '',
       }),
     });

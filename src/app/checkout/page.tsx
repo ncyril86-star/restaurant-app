@@ -32,7 +32,7 @@ function CheckoutPage() {
   const [order, setOrder] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const orderId = searchParams.get('orderId') || (typeof window !== 'undefined' ? localStorage.getItem('currentOrderId') || '' : '');
-  const [paymentMethod, setPaymentMethod] = useState<'fpx'|'card'|'ewallet'>('fpx');
+  const [paymentMethod, setPaymentMethod] = useState<'fpx'|'card'|'ewallet'|'counter'>('fpx');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -96,7 +96,32 @@ function CheckoutPage() {
         customerPhone: phone,
       });
 
-      // 2. Ask our Next.js backend to create a secure Stripe Checkout session
+      // 2. Handle payment based on method
+      if (paymentMethod === 'counter') {
+        // Mark as counter payment and redirect to success
+        const res = await fetch('/api/mark-paid', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: orderId,
+            email: email,
+            paymentMethod: 'counter',
+          }),
+        });
+        
+        if (res.ok) {
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('currentOrderId');
+          }
+          router.push(`/success?orderId=${orderId}&paymentMethod=counter`);
+          return;
+        } else {
+          const err = await res.json();
+          throw new Error(err.error || 'Failed to process counter payment');
+        }
+      }
+
+      // 3. Ask our Next.js backend to create a secure Stripe Checkout session
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -174,6 +199,10 @@ function CheckoutPage() {
               <label className="flex items-center gap-3">
                 <input type="radio" name="pm" checked={paymentMethod==='ewallet'} onChange={()=>setPaymentMethod('ewallet')} className="accent-amber-400" />
                 <span>e-Wallet</span>
+              </label>
+              <label className="flex items-center gap-3">
+                <input type="radio" name="pm" checked={paymentMethod==='counter'} onChange={()=>setPaymentMethod('counter')} className="accent-amber-400" />
+                <span className="font-semibold text-amber-400">Pay at Counter</span>
               </label>
             </div>
 

@@ -12,6 +12,7 @@ function SuccessPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId') || '';
   const sessionId = searchParams.get('session_id') || '';
+  const paymentMethod = searchParams.get('paymentMethod') || '';
 
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -49,7 +50,8 @@ function SuccessPage() {
           setOrder({ id: snap.id, ...data });
 
           // Mark order as paid via Next.js backend (proxies to Django)
-          if (data.status !== 'paid') {
+          // ONLY if not already marked as paid OR if it's a counter payment being initialized
+          if (data.status !== 'paid' && data.status !== 'pending_counter') {
             const res = await fetch(`/api/mark-paid`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -57,6 +59,7 @@ function SuccessPage() {
                 orderId: orderId,
                 sessionId: sessionId,
                 email: data.customerEmail || '',
+                paymentMethod: paymentMethod, // Pass current payment method
               }),
             });
             if (res.ok) {
@@ -136,9 +139,13 @@ function SuccessPage() {
               <CheckCircle size={40} className="text-white" strokeWidth={2.5} />
             </div>
           </div>
-          <h1 className="text-3xl font-extrabold text-white">Payment Successful!</h1>
+          <h1 className="text-3xl font-extrabold text-white">
+            {paymentMethod === 'counter' ? 'Order Placed!' : 'Payment Successful!'}
+          </h1>
           <p className="mt-2 text-white/60 text-center">
-            Thank you for your order. Your food is being prepared.
+            {paymentMethod === 'counter' 
+              ? 'Please proceed to the counter to pay. Your food is being prepared.' 
+              : 'Thank you for your order. Your food is being prepared.'}
           </p>
         </div>
 
@@ -152,8 +159,12 @@ function SuccessPage() {
                 <Receipt size={18} className="text-amber-400" />
                 <h2 className="text-base font-bold text-white">Order Receipt</h2>
               </div>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-400 uppercase">
-                Paid
+              <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold uppercase ${
+                paymentMethod === 'counter' 
+                  ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' 
+                  : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+              }`}>
+                {paymentMethod === 'counter' ? 'Pay at Counter' : 'Paid'}
               </span>
             </div>
           </div>
@@ -208,7 +219,9 @@ function SuccessPage() {
               <span className="text-sm font-medium text-white/80">RM 0.00</span>
             </div>
             <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between">
-              <span className="text-base font-bold text-white">Total Paid</span>
+              <span className="text-base font-bold text-white">
+                {paymentMethod === 'counter' ? 'Total to Pay' : 'Total Paid'}
+              </span>
               <span className="text-xl font-extrabold text-amber-400">RM {total.toFixed(2)}</span>
             </div>
           </div>
