@@ -10,7 +10,7 @@ import { CheckCircle, Receipt, ArrowLeft, Home, Download } from 'lucide-react';
 
 function SuccessPage() {
   const searchParams = useSearchParams();
-  const orderId = searchParams.get('orderId') || '';
+  const [orderId, setOrderId] = useState(searchParams.get('orderId') || '');
   const sessionId = searchParams.get('session_id') || '';
   const paymentMethod = searchParams.get('paymentMethod') || '';
 
@@ -42,36 +42,37 @@ function SuccessPage() {
 
     const fetchAndUpdateOrder = async () => {
       try {
-        // Fetch order data for display
-        const ref = doc(db, 'orders', orderId);
-        const snap = await getDoc(ref);
-        if (snap.exists()) {
-          const data = snap.data();
-          setOrder({ id: snap.id, ...data });
-
-          // Mark order as paid via Next.js backend (proxies to Django)
-          // ONLY if not already marked as paid OR if it's a counter payment being initialized
-          if (data.status !== 'paid' && data.status !== 'pending_counter') {
-            const res = await fetch(`/api/mark-paid`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                orderId: orderId,
-                sessionId: sessionId,
-                email: data.customerEmail || '',
-                paymentMethod: paymentMethod, // Pass current payment method
-              }),
-            });
-            if (res.ok) {
-              console.log('✅ Order marked as paid via backend');
-            } else {
-              const errText = await res.text();
-              console.error('❌ Failed to mark as paid API:', errText);
-              // Store error in state for user to see (hidden by default)
-              setOrder((prev: any) => ({ ...prev, _apiError: errText }));
-            }
+        // CASE A: Stripe Session Flow (Order NOT created yet)
+        if (sessionId && !orderId) {
+          const res = await fetch('/api/finalize-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId }),
+          });
+          const data = await res.json();
+          if (res.ok && data.orderId) {
+            setOrderId(data.orderId);
+            // The next effect run will handle fetching the order data
           } else {
-            // Order was already paid
+            console.error('Finalize order failed:', data.error);
+            setLoading(false);
+          }
+          return;
+        }
+
+        // CASE B: Already have an Order (Counter or Stripe just finalized)
+        if (orderId) {
+          const ref = doc(db, 'orders', orderId);
+          const snap = await getDoc(ref);
+          if (snap.exists()) {
+            const data = snap.data();
+            setOrder({ id: snap.id, ...data });
+
+            // If it's a counter payment, we might still need to mark it (triggers email)
+            if (paymentMethod === 'counter' && data.status !== 'pending_counter' && data.status !== 'paid') {
+              // This is a fallback, but the mark-paid is already called in finalize-order for Stripe
+              // For counter, we already set status 'pending_counter' in checkout/page.tsx
+            }
           }
         }
       } catch (err: any) {

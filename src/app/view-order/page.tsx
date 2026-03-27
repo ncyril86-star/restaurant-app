@@ -29,10 +29,9 @@ function normalizeImageUrl(raw: string): string {
 }
 
 function ViewOrderPage() {
-  const [order, setOrder] = useState<any | null>(null);
+  const [orderItems, setOrderItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
-  const [currentOrderId, setCurrentOrderId] = useState(searchParams.get('orderId') || '');
   const initialCategory = (searchParams.get('category') || 'all').toLowerCase();
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [recommendations, setRecommendations] = useState<any[]>([]);
@@ -45,53 +44,48 @@ function ViewOrderPage() {
   }, [searchParams]);
 
   useEffect(() => {
-    const urlId = searchParams.get('orderId');
-    // If urlId is explicitly '', it means user wants a fresh start
-    if (urlId === '') {
-      setCurrentOrderId('');
-      if (typeof window !== 'undefined') localStorage.removeItem('currentOrderId');
-    } else if (!currentOrderId && typeof window !== 'undefined') {
-      const stored = localStorage.getItem('currentOrderId');
-      if (stored) {
-        setCurrentOrderId(stored);
-      }
-    }
-  }, [currentOrderId, searchParams]);
-
-  useEffect(() => {
-    const fetchOrder = async () => {
+    const loadLocalCart = async () => {
       setLoading(true);
       try {
-        if (!currentOrderId) {
-          setOrder(null);
+        const storedCart = localStorage.getItem('localCart');
+        if (!storedCart) {
+          setOrderItems([]);
+          setLoading(false);
           return;
         }
-        const ref = doc(db, 'orders', currentOrderId);
-        const snap = await getDoc(ref);
-        if (!snap.exists()) {
-          setOrder(null);
-          if (typeof window !== 'undefined') localStorage.removeItem('currentOrderId');
-        } else {
-          const data = snap.data() as any;
-          // If the order is already paid, do not show it as an active cart!
-          if (data.status === 'paid') {
-            setOrder(null);
-            setCurrentOrderId('');
-            if (typeof window !== 'undefined') localStorage.removeItem('currentOrderId');
-            return;
-          }
-          setOrder({ id: snap.id, ...data });
-          try { if (typeof window !== 'undefined') localStorage.setItem('currentOrderId', snap.id); } catch {}
+
+        const cartMap = JSON.parse(storedCart);
+        const itemIds = Object.keys(cartMap);
+        
+        if (itemIds.length === 0) {
+          setOrderItems([]);
+          setLoading(false);
+          return;
         }
-      } catch (error) {
-        console.error('Error fetching order:', error);
-        setOrder(null);
+
+        // Fetch menu items to get latest details
+        const { collection, getDocs } = await import('firebase/firestore');
+        const snap = await getDocs(collection(db, 'menuItems'));
+        const allItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        
+        const resolved = itemIds.map(id => {
+          const base = allItems.find(it => it.id === id);
+          if (!base) return null;
+          return {
+            ...base,
+            qty: cartMap[id]
+          };
+        }).filter(Boolean);
+
+        setOrderItems(resolved as any[]);
+      } catch (err) {
+        console.error('Failed to load cart:', err);
       } finally {
         setLoading(false);
       }
     };
-    fetchOrder();
-  }, [currentOrderId]);
+    loadLocalCart();
+  }, []);
 
   useEffect(() => {
     const fetchRecommendations = async () => {
@@ -121,45 +115,50 @@ function ViewOrderPage() {
     return () => unsub();
   }, []);
 
-  const updateOrderItems = async (newItems: any[]) => {
-    if (!currentOrderId) return;
-    try {
-      const ref = doc(db, 'orders', currentOrderId);
-      await updateDoc(ref, { items: newItems, updatedAt: serverTimestamp() });
-      setOrder((prev: any) => ({ ...(prev || {}), items: newItems }));
-    } catch (err) {
-      console.error('Failed to update order items:', err);
-    }
+  const syncToStorage = (items: any[]) => {
+    const cartMap: { [k: string]: number } = {};
+    items.forEach(it => {
+      if (it.id) cartMap[it.id] = it.qty;
+    });
+    localStorage.setItem('localCart', JSON.stringify(cartMap));
   };
 
-  const incrementItem = async (item: any) => {
-    const existing = Array.isArray(order?.items) ? [...order.items] : [];
-    const idx = existing.findIndex((it: any) => it.id === item.id);
-    if (idx >= 0) {
-      existing[idx].qty = (existing[idx].qty || 0) + 1;
-    } else {
-      existing.push({ ...item, qty: 1 });
-    }
-    await updateOrderItems(existing);
+  const incrementItem = (item: any) => {
+    setOrderItems(prev => {
+      const existing = [...prev];
+      const idx = existing.findIndex((it: any) => it.id === item.id);
+      let newItems;
+      if (idx >= 0) {
+        existing[idx].qty = (existing[idx].qty || 0) + 1;
+        newItems = existing;
+      } else {
+        newItems = [...existing, { ...item, qty: 1 }];
+      }
+      syncToStorage(newItems);
+      return newItems;
+    });
   };
 
-  const decrementItem = async (item: any) => {
-    const existing = Array.isArray(order?.items) ? [...order.items] : [];
-    const idx = existing.findIndex((it: any) => it.id === item.id);
-    if (idx >= 0) {
-      existing[idx].qty = Math.max(0, (existing[idx].qty || 0) - 1);
-      if (existing[idx].qty === 0) existing.splice(idx, 1);
-      await updateOrderItems(existing);
-    }
+  const decrementItem = (item: any) => {
+    setOrderItems(prev => {
+      const existing = [...prev];
+      const idx = existing.findIndex((it: any) => it.id === item.id);
+      if (idx >= 0) {
+        existing[idx].qty = Math.max(0, (existing[idx].qty || 0) - 1);
+        if (existing[idx].qty === 0) existing.splice(idx, 1);
+        syncToStorage(existing);
+        return [...existing];
+      }
+      return prev;
+    });
   };
 
-  const removeItem = async (item: any) => {
-    const existing = Array.isArray(order?.items) ? [...order.items] : [];
-    const idx = existing.findIndex((it: any) => it.id === item.id);
-    if (idx >= 0) {
-      existing.splice(idx, 1);
-      await updateOrderItems(existing);
-    }
+  const removeItem = (item: any) => {
+    setOrderItems(prev => {
+      const filtered = prev.filter(it => it.id !== item.id);
+      syncToStorage(filtered);
+      return filtered;
+    });
   };
 
   if (loading) {
@@ -177,7 +176,7 @@ function ViewOrderPage() {
     { key: 'dessert', label: 'Dessert' },
   ];
 
-  const orderItems: Array<any> = order && Array.isArray(order.items) ? order.items : [];
+  // Removed orderItems reassignment
   const filteredOrderItems = orderItems.filter((item) => {
     if (selectedCategory === 'all') return true;
     const cat = (item as any).category;
@@ -247,7 +246,7 @@ function ViewOrderPage() {
             <nav className="hidden items-center gap-6 text-sm text-white/80 md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <a className="hover:text-white transition-colors" href="/#home">Home</a>
               <a className="hover:text-white transition-colors" href="/#about">About</a>
-              <Link href={`/menu?orderId=${currentOrderId}`} className="hover:text-white transition-colors">Menu</Link>
+              <Link href={`/menu`} className="hover:text-white transition-colors">Menu</Link>
               <a className="hover:text-white transition-colors" href="/#contact">Contact</a>
               <Link className="hover:text-white transition-colors" href="/reviews">Reviews</Link>
             </nav>
@@ -289,7 +288,7 @@ function ViewOrderPage() {
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center">
                   <p className="text-white/80 text-lg">Your cart is empty.</p>
                   <Link 
-                    href={`/menu?orderId=${currentOrderId}`}
+                    href={`/menu`}
                     className="mt-4 inline-block text-amber-400 font-semibold hover:text-amber-300 transition-colors"
                   >
                     Continue Browsing &rarr;
@@ -382,7 +381,7 @@ function ViewOrderPage() {
 
                 <div className="mt-8">
                   <Link
-                    href={`/checkout?orderId=${currentOrderId}`}
+                    href={`/checkout`}
                     className="w-full inline-block text-center rounded-full bg-amber-400 px-4 py-3.5 text-base font-extrabold text-black shadow-[0_10px_30px_rgba(245,158,11,0.2)] hover:bg-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-[#0b0f19] transition-all"
                   >
                     Checkout
@@ -391,7 +390,7 @@ function ViewOrderPage() {
                 
                 <div className="mt-4 text-center">
                   <Link 
-                    href={`/menu?orderId=${currentOrderId}`}
+                    href={`/menu`}
                     className="text-sm font-medium text-white/60 hover:text-white transition-colors"
                   >
                     or Continue Browsing

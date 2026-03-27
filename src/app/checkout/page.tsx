@@ -29,9 +29,9 @@ function normalizeImageUrl(raw: string): string {
 function CheckoutPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [order, setOrder] = useState<any | null>(null);
+  const orderIdParam = searchParams.get('orderId') || '';
+  const [orderItems, setOrderItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const orderId = searchParams.get('orderId') || (typeof window !== 'undefined' ? localStorage.getItem('currentOrderId') || '' : '');
   const [paymentMethod, setPaymentMethod] = useState<'fpx' | 'counter'>('fpx');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -47,31 +47,49 @@ function CheckoutPage() {
   }, []);
 
   useEffect(() => {
-    const fetchOrder = async () => {
+    const loadLocalCart = async () => {
       setLoading(true);
       try {
-        if (!orderId) {
-          setOrder(null);
+        const storedCart = localStorage.getItem('localCart');
+        if (!storedCart) {
+          setOrderItems([]);
+          setLoading(false);
           return;
         }
-        const ref = doc(db, 'orders', orderId);
-        const snap = await getDoc(ref);
-        if (!snap.exists()) {
-          setOrder(null);
-        } else {
-          setOrder({ id: snap.id, ...snap.data() });
+
+        const cartMap = JSON.parse(storedCart);
+        const itemIds = Object.keys(cartMap);
+        
+        if (itemIds.length === 0) {
+          setOrderItems([]);
+          setLoading(false);
+          return;
         }
+
+        // Fetch menu items to get latest prices/names/images
+        const { collection, getDocs } = await import('firebase/firestore');
+        const snap = await getDocs(collection(db, 'menuItems'));
+        const allItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        
+        const resolved = itemIds.map(id => {
+          const base = allItems.find(it => it.id === id);
+          if (!base) return null;
+          return {
+            ...base,
+            qty: cartMap[id]
+          };
+        }).filter(Boolean);
+
+        setOrderItems(resolved);
       } catch (err) {
-        console.error('Fetch order failed', err);
-        setOrder(null);
+        console.error('Failed to load cart:', err);
       } finally {
         setLoading(false);
       }
     };
-    fetchOrder();
-  }, [orderId]);
+    loadLocalCart();
+  }, []);
 
-  const orderItems: any[] = order && Array.isArray(order.items) ? order.items : [];
   const total = orderItems.reduce((s, it) => {
     const price = Number(it.price || it.unit_price || 0) || 0;
     const qty = Number(it.qty || it.quantity || 0) || 0;
@@ -79,7 +97,7 @@ function CheckoutPage() {
   }, 0);
 
   const pay = async () => {
-    if (!orderId || !orderItems.length) {
+    if (!orderItems.length) {
       setToast({ message: 'No items in order', show: true });
       setTimeout(() => setToast({ message: '', show: false }), 2000);
       return;
@@ -88,46 +106,43 @@ function CheckoutPage() {
     setProcessing(true);
 
     try {
-      // 1. Save customer info to Firestore first
-      const orderRef = doc(db, 'orders', orderId);
-      await updateDoc(orderRef, {
-        customerName: name,
-        customerEmail: email,
-        customerPhone: phone,
-      });
-
-      // 2. Handle payment based on method
+      // 1. Create the order document if Pay at Counter
+      let finalOrderId = '';
+      
       if (paymentMethod === 'counter') {
-        // Mark as counter payment and redirect to success
-        const res = await fetch('/api/mark-paid', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            orderId: orderId,
-            email: email,
-            paymentMethod: 'counter',
-          }),
+        const { collection, addDoc } = await import('firebase/firestore');
+        const colRef = collection(db, 'orders');
+        const docRef = await addDoc(colRef, {
+          items: orderItems,
+          customerName: name,
+          customerEmail: email,
+          customerPhone: phone,
+          total: total,
+          status: 'pending_counter', // Initial status for counter
+          paymentMethod: 'counter',
+          createdAt: serverTimestamp(),
         });
+        finalOrderId = docRef.id;
 
-        if (res.ok) {
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('currentOrderId');
-          }
-          router.push(`/success?orderId=${orderId}&paymentMethod=counter`);
-          return;
-        } else {
-          const err = await res.json();
-          throw new Error(err.error || 'Failed to process counter payment');
+        // Redirect to success
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('localCart');
         }
+        router.push(`/success?orderId=${finalOrderId}&paymentMethod=counter`);
+        return;
       }
 
-      // 3. Ask our Next.js backend to create a secure Stripe Checkout session
+      // 2. Stripe / FPX flow
+      // We pass the cart items to the session creation API
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          orderId: orderId,
+          items: orderItems,
           email: email,
+          customerName: name,
+          customerPhone: phone,
+          paymentMethod: 'fpx'
         }),
       });
 
@@ -137,9 +152,8 @@ function CheckoutPage() {
 
       // Redirect the user to the secure Stripe payment screen
       if (data.url) {
-        // Clear local order state BEFORE leaving so a new order starts next time
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('currentOrderId');
+          localStorage.removeItem('localCart');
         }
         window.location.href = data.url;
       }
@@ -172,7 +186,7 @@ function CheckoutPage() {
           <nav className="hidden md:flex items-center gap-6 text-sm text-white/80 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <a className="hover:text-white" href="/#home">Home</a>
             <a className="hover:text-white transition-colors" href="/#about">About</a>
-            <Link href={`/menu?orderId=${orderId}`} className="hover:text-white">Menu</Link>
+            <Link href={`/menu`} className="hover:text-white">Menu</Link>
             <a className="hover:text-white" href="/#contact">Contact</a>
           </nav>
 

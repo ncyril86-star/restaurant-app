@@ -45,7 +45,6 @@ function MenuPage() {
   const [toast, setToast] = useState<{ message: string; show: boolean }>({ message: '', show: false });
   
   const searchParams = useSearchParams();
-  const [currentOrderId, setCurrentOrderId] = useState(searchParams.get('orderId') || '');
   const router = useRouter();
   
   const initialCategory = (searchParams.get('category') || 'all').toLowerCase();
@@ -87,82 +86,32 @@ function MenuPage() {
   }, []);
 
   useEffect(() => {
-    const loadOrderToCart = async () => {
+    const loadCartFromStorage = () => {
       try {
-        const urlId = searchParams.get('orderId');
-        // If urlId is explicitly '', it means user wants a fresh start (e.g., from "Order Again")
-        // If urlId is null, it means the param is missing, so we check localStorage
-        const stored = urlId === '' ? '' : (urlId || (typeof window !== 'undefined' ? localStorage.getItem('currentOrderId') : '') || '');
-        
-        if (!stored) {
-          setCart({});
-          setCurrentOrderId('');
-          if (typeof window !== 'undefined') localStorage.removeItem('currentOrderId');
-          return;
-        }
-        
-        setCurrentOrderId(stored);
-        
-        const ref = doc(db, 'orders', stored);
-        const snap = await getDoc(ref);
-        if (!snap.exists()) {
-          if (typeof window !== 'undefined') localStorage.removeItem('currentOrderId');
-          return;
-        }
-        const data = snap.data() as any;
-        
-        // If the order is already paid, DO NOT load it into the cart! 
-        // Force the user to start a new order.
-        if (data.status === 'paid') {
-          setCurrentOrderId('');
-          setCart({});
-          if (typeof window !== 'undefined') localStorage.removeItem('currentOrderId');
-          return;
-        }
-
-        if (Array.isArray(data.items)) {
-          const cartMap: { [k: string]: number } = {};
-          data.items.forEach((it: any) => {
-            if (it && it.id) cartMap[it.id] = it.qty || it.quantity || 0;
-          });
-          setCart(cartMap);
-          try { localStorage.setItem('currentOrderId', stored); } catch {}
+        const storedCart = localStorage.getItem('localCart');
+        if (storedCart) {
+          setCart(JSON.parse(storedCart));
         }
       } catch (err) {
-        console.warn('Failed to load order to cart:', err);
+        console.warn('Failed to load cart from storage:', err);
       }
     };
-    loadOrderToCart();
-  }, [searchParams]);
+    loadCartFromStorage();
+  }, []);
 
-  const handleDecrement = async (item: any) => {
+  const handleDecrement = (item: any) => {
     setCart((prev) => {
       const current = prev[item.id] || 0;
       const next = Math.max(0, current - 1);
-      return { ...prev, [item.id]: next };
-    });
-
-    try {
-      const usedOrderId = currentOrderId || (typeof window !== 'undefined' ? localStorage.getItem('currentOrderId') || '' : '');
-      if (!usedOrderId) return;
-      
-      const ref = doc(db, 'orders', usedOrderId);
-      const snap = await getDoc(ref);
-      if (!snap.exists()) return;
-      const data = snap.data() as any;
-      const existingItems = Array.isArray(data.items) ? data.items : [];
-      const idx = existingItems.findIndex((it: any) => it.id === item.id);
-      
-      if (idx >= 0) {
-        existingItems[idx].qty = Math.max(0, (existingItems[idx].qty || 0) - 1);
-        if (existingItems[idx].qty === 0) {
-          existingItems.splice(idx, 1);
-        }
-        await updateDoc(ref, { items: existingItems, updatedAt: serverTimestamp() });
+      const newCart = { ...prev };
+      if (next === 0) {
+        delete newCart[item.id];
+      } else {
+        newCart[item.id] = next;
       }
-    } catch (err) {
-      console.warn('Failed to decrement in order:', err);
-    }
+      localStorage.setItem('localCart', JSON.stringify(newCart));
+      return newCart;
+    });
   };
 
   const showToast = (message: string, ms = 1800) => {
@@ -170,67 +119,13 @@ function MenuPage() {
     setTimeout(() => setToast({ message: '', show: false }), ms);
   };
 
-  const handleAdd = async (item: any) => {
-    setCart((prev) => ({ ...prev, [item.id]: (prev[item.id] || 0) + 1 }));
-
-    try {
-      let usedOrderId = currentOrderId;
-
-      if (!usedOrderId) {
-        const newOrder = {
-          items: [
-            {
-              id: item.id,
-              name: item.name,
-              price: item.price,
-              qty: 1,
-              image: item.image || null,
-              description: item.description || null,
-              category: item.category || null, // <-- Category added here
-            },
-          ],
-          status: 'pending',
-          createdAt: serverTimestamp(),
-        } as any;
-
-        const colRef = collection(db, 'orders');
-        const docRef = await addDoc(colRef, newOrder);
-        usedOrderId = docRef.id;
-        setCurrentOrderId(usedOrderId);
-      } else {
-        const ref = doc(db, 'orders', usedOrderId);
-        const snap = await getDoc(ref);
-        
-        if (!snap.exists()) {
-          const colRef = collection(db, 'orders');
-          const docRef = await addDoc(colRef, {
-            items: [
-              { id: item.id, name: item.name, price: item.price, qty: 1, image: item.image || null, description: item.description || null, category: item.category || null } // <-- Category added here
-            ],
-            status: 'pending',
-            createdAt: serverTimestamp(),
-          });
-          usedOrderId = docRef.id;
-          setCurrentOrderId(usedOrderId);
-        } else {
-          const data = snap.data() as any;
-          const existingItems = Array.isArray(data.items) ? data.items : [];
-          const foundIdx = existingItems.findIndex((it: any) => it.id === item.id);
-          if (foundIdx >= 0) {
-            existingItems[foundIdx].qty = (existingItems[foundIdx].qty || 0) + 1;
-          } else {
-            existingItems.push({ id: item.id, name: item.name, price: item.price, qty: 1, image: item.image || null, description: item.description || null, category: item.category || null }); // <-- Category added here
-          }
-          await updateDoc(ref, { items: existingItems, updatedAt: serverTimestamp() });
-        }
-      }
-
-      showToast('Order updated');
-      try { if (typeof window !== 'undefined') localStorage.setItem('currentOrderId', usedOrderId); } catch {}
-    } catch (error) {
-      console.error('Error adding to order:', error);
-      showToast('Failed to add to order');
-    }
+  const handleAdd = (item: any) => {
+    setCart((prev) => {
+      const newCart = { ...prev, [item.id]: (prev[item.id] || 0) + 1 };
+      localStorage.setItem('localCart', JSON.stringify(newCart));
+      return newCart;
+    });
+    showToast('Cart updated');
   };
 
   if (loading) {
@@ -290,14 +185,14 @@ function MenuPage() {
           <nav className="hidden items-center gap-6 text-sm text-white/80 md:flex">
             <a className="hover:text-white" href="/#home">Home</a>
             <a className="hover:text-white" href="/#about">About</a>
-            <Link href={`/menu?orderId=${currentOrderId}`} className="hover:text-white">Menu</Link>
+            <Link href={`/menu`} className="hover:text-white">Menu</Link>
             <a className="hover:text-white" href="/#contact">Contact</a>
             <Link className="hover:text-white transition-colors" href="/reviews">Reviews</Link>
           </nav>
 
           <div className="flex items-center gap-3">
             <Link
-              href={`/view-order?orderId=${currentOrderId}`}
+              href={`/view-order`}
               className="rounded-full bg-amber-400 px-4 py-2 text-sm font-extrabold text-black shadow-[0_10px_30px_rgba(245,158,11,0.25)] hover:bg-amber-300"
             >
               View Order

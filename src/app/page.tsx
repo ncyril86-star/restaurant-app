@@ -7,8 +7,6 @@ import { ChefHat, Utensils, ShoppingCart, Headset } from 'lucide-react';
 import { MapPin, Phone, Mail } from 'lucide-react';
 
 function LandingPage() {
-  const searchParams = useSearchParams();
-  const orderId = searchParams.get('orderId') || '';
   const [scrollProgress, setScrollProgress] = useState(0);
   const [visibleSections, setVisibleSections] = useState<{ [key: string]: boolean }>({
     hero: false,
@@ -172,7 +170,7 @@ function LandingPage() {
           </div>
 
           <nav className="hidden items-center gap-6 text-sm text-white/80 md:flex">
-
+            <a className="hover:text-white transition-colors" href="#home">Home</a>
             <a className="hover:text-white transition-colors" href="#about">About</a>
 
             {/* Dropdown Menu Container */}
@@ -197,19 +195,19 @@ function LandingPage() {
               <div className="absolute left-0 top-full mt-1 w-48 rounded-xl border border-white/10 bg-[#0b0f19]/95 backdrop-blur-md shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top scale-95 group-hover:scale-100">
                 <div className="py-2 flex flex-col">
                   <Link
-                    href={`/menu?category=main&orderId=${orderId}`}
+                    href={`/menu?category=main`}
                     className="px-4 py-2 text-white/70 hover:bg-white/10 hover:text-amber-300 transition-colors"
                   >
                     Main Dish
                   </Link>
                   <Link
-                    href={`/menu?category=dessert&orderId=${orderId}`}
+                    href={`/menu?category=dessert`}
                     className="px-4 py-2 text-white/70 hover:bg-white/10 hover:text-amber-300 transition-colors"
                   >
                     Desserts
                   </Link>
                   <Link
-                    href={`/menu?category=drinks&orderId=${orderId}`}
+                    href={`/menu?category=drinks`}
                     className="px-4 py-2 text-white/70 hover:bg-white/10 hover:text-amber-300 transition-colors"
                   >
                     Drinks
@@ -224,13 +222,8 @@ function LandingPage() {
           </nav>
 
           <div className="flex items-center gap-3">
-            {orderId ? (
-              <p className="hidden text-xs text-white/70 sm:block">
-                Order ID: <span className="font-semibold text-white">{orderId}</span>
-              </p>
-            ) : null}
             <Link
-              href={`/view-order?orderId=${orderId}`}
+              href={`/view-order`}
               className="rounded-full bg-amber-400 px-4 py-2 text-sm font-extrabold text-black shadow-[0_10px_30px_rgba(245,158,11,0.25)] hover:bg-amber-300 transition-colors"
             >
               View Order
@@ -276,7 +269,7 @@ function LandingPage() {
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
-                href={`/menu?orderId=${orderId}`}
+                href={`/menu`}
                 className="btn-hover rounded-full bg-amber-400 px-8 py-3 text-base font-extrabold text-black hover:bg-amber-300"
               >
                 Browse Menu
@@ -436,7 +429,7 @@ function LandingPage() {
                 Contact Us
               </a>
               <Link
-                href={`/menu?orderId=${orderId}`}
+                href={`/menu`}
                 className="btn-hover rounded-full border border-white/15 bg-white/5 px-8 py-3 text-base font-semibold text-white hover:bg-white/10"
               >
                 Order Now

@@ -8,26 +8,14 @@ export async function POST(request: NextRequest) {
   try {
     console.log('🔴 ROUTE CALLED');
     
-    const { orderId, email } = await request.json();
-    console.log('🔴 Order ID:', orderId);
+    const { items, email, customerName, customerPhone } = await request.json();
     console.log('🔴 Customer Email:', email);
+    console.log('🔴 Items Count:', items?.length);
 
-    if (!orderId) {
-      return NextResponse.json({ error: 'Order ID required' }, { status: 400 });
+    if (!items || !items.length) {
+      return NextResponse.json({ error: 'No items in cart' }, { status: 400 });
     }
 
-    console.log('🔴 Fetching from Firebase...');
-    const orderRef = doc(db, 'orders', orderId);
-    const orderSnap = await getDoc(orderRef);
-    
-    if (!orderSnap.exists()) {
-      console.log('🔴 Order not found');
-      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
-    }
-
-    const orderData = orderSnap.data();
-    const items = orderData.items || [];
-    
     const total = items.reduce((sum: number, item: any) => {
       const price = Number(item.price || item.unit_price || 0) || 0;
       const qty = Number(item.qty || item.quantity || 0) || 0;
@@ -35,10 +23,11 @@ export async function POST(request: NextRequest) {
     }, 0);
 
     console.log('🔴 Total:', total);
-    console.log('🔴 Stripe key exists:', !!process.env.STRIPE_SECRET_KEY);
 
-    console.log('🔴 Creating Stripe session...');
-    
+    // Prepare metadata (Stripe limit: 500 chars per value)
+    // We store only IDs and quantities to save space
+    const cartData = items.map((it: any) => `${it.id}:${it.qty || it.quantity || 1}`).join(',');
+
     const sessionConfig: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ['card', 'fpx', 'grabpay'],
       line_items: [
@@ -46,7 +35,7 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: 'myr',
             product_data: { 
-              name: `Order #${orderId}`,
+              name: `Restaurant Order`,
               description: `${items.length} item(s)`
             },
             unit_amount: Math.round(total * 100),
@@ -55,8 +44,14 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}&orderId=${orderId}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout?orderId=${orderId}`,
+      metadata: {
+        customerName: customerName || '',
+        customerPhone: customerPhone || '',
+        customerEmail: email || '',
+        cartData: cartData.substring(0, 500),
+      },
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout`,
     };
 
     if (email) {
