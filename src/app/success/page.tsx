@@ -38,7 +38,11 @@ function SuccessPage() {
 
   // Fetch order and mark as paid via backend API
   useEffect(() => {
-    if (!authReady || !orderId) { if (!orderId) setLoading(false); return; }
+    if (!authReady) return;
+    if (!orderId && !sessionId) {
+      setLoading(false);
+      return;
+    }
 
     const fetchAndUpdateOrder = async () => {
       try {
