@@ -416,6 +416,24 @@ def analytics(request):
 
     return JsonResponse(analytics_data)
 
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def db_check(request):
+    """Diagnostic endpoint to check Firestore content from Render."""
+    try:
+        db = _get_db()
+        results = {}
+        for coll in ["orders", "menuItems", "menu_items", "categories", "reviews"]:
+            docs = list(db.collection(coll).limit(1).stream())
+            results[coll] = {
+                "count_hint": "Exists" if docs else "Empty/Missing",
+                "sample": docs[0].to_dict() if docs else None
+            }
+        return JsonResponse({"status": "connected", "database": results})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
 @csrf_exempt
 @require_http_methods(["GET"])
 def test_email(request):
