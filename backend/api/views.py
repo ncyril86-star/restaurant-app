@@ -312,129 +312,136 @@ def mark_order_paid(request, order_id):
 @csrf_exempt
 @require_http_methods(["GET"])
 def analytics(request):
-    db = _get_db()
-
-    # ── Orders ──
-    order_docs = list(db.collection("orders").stream())
-    total_orders = len(order_docs)
-    total_revenue = 0
-    category_sales_map = {}
-    daily_orders_map = {}
-    item_sales_map = {}  # Track top selling items
-    item_image_map = {}  # Track images for those items
-
-    from datetime import datetime, date
-    today_date = date.today()
-    today_sales = []
-    all_sales = []
-
-    for odoc in order_docs:
-        odata = odoc.to_dict()
-        items = odata.get("items", [])
-
-        created = odata.get("createdAt")
-        is_today = False
+    try:
+        db = _get_db()
+        from datetime import date
+        today_date = date.today()
         
-        # Robust date handling
-        created_dt = None
-        if created:
-            if hasattr(created, 'date'):
-                created_dt = created
-            elif isinstance(created, str):
-                try:
-                    from django.utils.dateparse import parse_datetime
-                    created_dt = parse_datetime(created)
-                except Exception:
-                    pass
+        today_sales = []
+        all_sales = []
+        category_sales_map = {}
+        daily_orders_map = {}
+        item_sales_map = {}
+        item_image_map = {}
+        total_revenue = 0
+
+        # ── Orders ──
+        order_docs = list(db.collection("orders").stream())
+        total_orders = len(order_docs)
         
-        if created_dt:
-            try:
-                if created_dt.date() == today_date:
-                    is_today = True
-            except Exception:
-                pass
-
-        for it in items:
-            qty = it.get("qty", it.get("quantity", 1))
-            price = float(it.get("price", 0))
-            name = it.get("name", "Unknown Item")
-            img = it.get("image")
-            total_revenue += price * qty
-
-            cat = it.get("category", "Other") or "Other"
-            category_sales_map[cat] = category_sales_map.get(cat, 0) + price * qty
-
-            item_sales_map[name] = item_sales_map.get(name, 0) + qty
-            if img:
-                item_image_map[name] = img
+        for odoc in order_docs:
+            odata = odoc.to_dict()
+            items = odata.get("items", [])
+            created = odata.get("createdAt")
+            is_today = False
             
-            # Formatting strings safely
-            time_str = "N/A"
-            date_str = "N/A"
+            created_dt = None
+            if created:
+                if hasattr(created, 'date'):
+                    created_dt = created
+                elif isinstance(created, str):
+                    try:
+                        from django.utils.dateparse import parse_datetime
+                        # Handle ISO strings like 2026-03-27T07:08:36.218Z
+                        created_dt = parse_datetime(created)
+                    except Exception:
+                        pass
+            
             if created_dt:
                 try:
-                    time_str = created_dt.strftime("%H:%M")
-                    date_str = created_dt.strftime("%Y-%m-%d %H:%M")
+                    if created_dt.date() == today_date:
+                        is_today = True
                 except Exception:
                     pass
-            elif isinstance(created, str):
-                date_str = created[:16] # Fallback for raw string
-            
-            if is_today:
-                today_sales.append({
+
+            for it in items:
+                try:
+                    qty = int(it.get("qty", it.get("quantity", 1)))
+                    price = float(it.get("price", 0))
+                except (ValueError, TypeError):
+                    continue
+
+                name = it.get("name", "Unknown Item")
+                img = it.get("image")
+                total_revenue += price * qty
+
+                cat = it.get("category", "Other") or "Other"
+                category_sales_map[cat] = category_sales_map.get(cat, 0) + price * qty
+
+                item_sales_map[name] = item_sales_map.get(name, 0) + qty
+                if img:
+                    item_image_map[name] = img
+                
+                time_str = "N/A"
+                date_str = "N/A"
+                if created_dt:
+                    try:
+                        time_str = created_dt.strftime("%H:%M")
+                        date_str = created_dt.strftime("%Y-%m-%d %H:%M")
+                    except Exception:
+                        pass
+                elif isinstance(created, str):
+                    date_str = created[:16] # Fallback for raw string
+                
+                if is_today:
+                    today_sales.append({
+                        "name": name,
+                        "qty": qty,
+                        "price": price,
+                        "time": time_str
+                    })
+                
+                all_sales.append({
+                    "orderId": odoc.id,
                     "name": name,
                     "qty": qty,
                     "price": price,
-                    "time": time_str
+                    "date": date_str
                 })
-            
-            all_sales.append({
-                "orderId": odoc.id,
-                "name": name,
-                "qty": qty,
-                "price": price,
-                "date": date_str
-            })
 
-        # Daily breakdown
-        if created_dt:
-            try:
-                day_label = created_dt.strftime("%a")
-                daily_orders_map[day_label] = daily_orders_map.get(day_label, 0) + 1
-            except Exception:
-                pass
+            if created_dt:
+                try:
+                    day_label = created_dt.strftime("%a")
+                    daily_orders_map[day_label] = daily_orders_map.get(day_label, 0) + 1
+                except Exception:
+                    pass
 
-    # ── Top Items ──
-    sorted_items = sorted(item_sales_map.items(), key=lambda x: x[1], reverse=True)
-    top_items = [
-        {"name": name, "sales": sales, "image": item_image_map.get(name)} 
-        for name, sales in sorted_items[:5]
-    ]
+        # ── Top Items ──
+        sorted_items = sorted(item_sales_map.items(), key=lambda x: x[1], reverse=True)
+        top_items = [
+            {"name": name, "sales": sales, "image": item_image_map.get(name)} 
+            for name, sales in sorted_items[:5]
+        ]
 
-    # ── Menu item count ──
-    menu_docs = list(db.collection("menuItems").stream())
+        # ── Menu item count ──
+        menu_docs = list(db.collection("menuItems").stream())
 
-    avg_order_value = round(total_revenue / total_orders, 2) if total_orders else 0
+        avg_order_value = round(total_revenue / total_orders, 2) if total_orders else 0
 
-    analytics_data = {
-        "total_orders": total_orders,
-        "total_revenue": round(total_revenue, 2),
-        "menu_items": len(menu_docs),
-        "avg_order_value": avg_order_value,
-        "daily_orders": [
-            {"date": day, "count": count}
-            for day, count in daily_orders_map.items()
-        ],
-        "category_sales": [
-            {"category": cat, "sales": round(sales, 2)}
-            for cat, sales in category_sales_map.items()
-        ],
-        "top_items": top_items,
-        "today_sales": today_sales,
-        "all_sales": all_sales,
-    }
-
-    return JsonResponse(analytics_data)
+        analytics_data = {
+            "total_orders": total_orders,
+            "total_revenue": round(total_revenue, 2),
+            "menu_items": len(menu_docs),
+            "avg_order_value": avg_order_value,
+            "daily_orders": [
+                {"date": day, "count": count}
+                for day, count in daily_orders_map.items()
+            ],
+            "category_sales": [
+                {"category": cat, "sales": round(sales, 2)}
+                for cat, sales in category_sales_map.items()
+            ],
+            "top_items": top_items,
+            "today_sales": today_sales,
+            "all_sales": all_sales,
+        }
+        return JsonResponse(analytics_data)
+    except Exception as e:
+        import traceback
+        return JsonResponse({
+            "error": str(e), 
+            "traceback": traceback.format_exc()
+        }, status=500)
 
 
 @csrf_exempt
