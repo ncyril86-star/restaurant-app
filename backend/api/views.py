@@ -130,7 +130,7 @@ def health(request):
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
 def menu_list(request):
-    db = _get_db()
+    db = get_db()
     col = db.collection("menuItems")
 
     if request.method == "GET":
@@ -166,7 +166,7 @@ def menu_list(request):
 @csrf_exempt
 @require_http_methods(["PUT", "DELETE"])
 def menu_detail(request, item_id):
-    db = _get_db()
+    db = get_db()
     doc_ref = db.collection("menuItems").document(item_id)
 
     if request.method == "DELETE":
@@ -199,7 +199,7 @@ def menu_detail(request, item_id):
 @csrf_exempt
 @require_http_methods(["GET"])
 def orders_list(request):
-    db = _get_db()
+    db = get_db()
     docs = db.collection("orders").stream()
     orders = []
     for doc in docs:
@@ -212,7 +212,7 @@ def orders_list(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def order_detail(request, order_id):
-    db = _get_db()
+    db = get_db()
     doc = db.collection("orders").document(order_id).get()
     if not doc.exists:
         return JsonResponse({"error": "Not found"}, status=404)
@@ -225,7 +225,7 @@ def order_detail(request, order_id):
 @require_http_methods(["POST"])
 def mark_order_paid(request, order_id):
     """Mark an order as paid after Stripe payment (uses Admin SDK, bypasses rules)."""
-    db = _get_db()
+    db = get_db()
     doc_ref = db.collection("orders").document(order_id)
     doc = doc_ref.get()
     if not doc.exists:
