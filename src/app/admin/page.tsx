@@ -234,7 +234,7 @@ export default function AdminDashboard() {
     const avgOrderValue = uniqueOrders > 0 ? totalRevenue / uniqueOrders : 0;
 
     // Best selling items calculation from filtered list
-    const itemMap: Record<string, { sales: number; image?: string }> = {};
+    const itemMap: Record<string, { sales: number }> = {};
     filteredAllSales.forEach(sale => {
        if (!itemMap[sale.name]) {
            itemMap[sale.name] = { sales: 0 };
@@ -242,14 +242,18 @@ export default function AdminDashboard() {
        itemMap[sale.name].sales += sale.qty;
     });
 
+    // Build image lookup from original analytics
+    const imageMap: Record<string, string> = {};
+    (analytics.top_items || []).forEach(i => { if (i.name && i.image) imageMap[i.name] = i.image; });
+
     const topItems = Object.entries(itemMap).map(([name, data]) => ({
         name,
         sales: data.sales,
-        image: '' // we could lookup images from original analytics.top_items or filteredAllSales if available
+        image: imageMap[name] || '' 
     })).sort((a,b) => b.sales - a.sales);
 
     return { totalRevenue, avgOrderValue, totalOrders: uniqueOrders, topItems };
-  }, [filteredAllSales]);
+  }, [filteredAllSales, analytics.top_items]);
 
   const sortedAllSales = [...filteredAllSales].sort((a, b) => {
     const { key, direction } = analyticsSort;
@@ -579,8 +583,8 @@ export default function AdminDashboard() {
                         <option value="all">All Time</option>
                         <option value="yesterday">Yesterday</option>
                         <option value="3days">Last 3 Days</option>
-                        <option value="week">Last Week</option>
-                        <option value="month">Last Month</option>
+                        <option value="week">Last 7 Days</option>
+                        <option value="month">Last 30 Days</option>
                     </select>
                  </div>
               </div>
@@ -625,9 +629,18 @@ export default function AdminDashboard() {
                     {filteredStats.topItems.slice(0, 4).map((item, idx) => (
                       <div key={item.name} className="group overflow-hidden rounded-2xl border border-white/10 bg-[#0d1117] transition-all hover:border-amber-400/30 hover:shadow-2xl hover:shadow-amber-900/10">
                         <div className="relative h-40 overflow-hidden">
-                          <div className="flex h-full w-full items-center justify-center bg-white/5 text-white/20">
-                              <ChefHat size={40} />
-                          </div>
+                          {item.image ? (
+                            <img 
+                              src={item.image} 
+                              alt={item.name}
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center bg-white/5 text-white/20">
+                                <ChefHat size={40} />
+                            </div>
+                          )}
                           <div className="absolute top-3 left-3 flex h-8 w-8 items-center justify-center rounded-lg bg-black/60 backdrop-blur-md text-xs font-bold text-amber-400 border border-white/10">
                             #{idx + 1}
                           </div>
