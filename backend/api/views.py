@@ -326,6 +326,7 @@ def analytics(request):
     from datetime import datetime, date
     today_date = date.today()
     today_sales = []
+    all_sales = []
 
     for odoc in order_docs:
         odata = odoc.to_dict()
@@ -365,6 +366,14 @@ def analytics(request):
                     "price": price,
                     "time": created.strftime("%H:%M") if created else "N/A"
                 })
+            
+            # Collected for all-time historical view
+            all_sales.append({
+                "name": name,
+                "qty": qty,
+                "price": price,
+                "date": created.strftime("%Y-%m-%d %H:%M") if created else "N/A"
+            })
 
         # Daily breakdown
         if created:
@@ -401,6 +410,7 @@ def analytics(request):
         ],
         "top_items": top_items,
         "today_sales": today_sales,
+        "all_sales": all_sales,
     }
 
     return JsonResponse(analytics_data)

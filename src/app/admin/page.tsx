@@ -38,6 +38,7 @@ type AnalyticsData = {
   category_sales?: { category: string; sales: number }[];
   top_items?: { name: string; sales: number; image?: string }[];
   today_sales?: { name: string; qty: number; price: number; time: string }[];
+  all_sales?: { name: string; qty: number; price: number; date: string }[];
 };
 
 /* ───────────────────── Fetch helper ───────────────────── */
@@ -194,6 +195,30 @@ export default function AdminDashboard() {
       item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.category?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  /* ─── Analytics Sorting ─── */
+  const [analyticsSort, setAnalyticsSort] = useState<{ key: string; direction: 'asc' | 'desc' }>({
+    key: 'date',
+    direction: 'desc'
+  });
+
+  const sortedAllSales = [...(analytics.all_sales || [])].sort((a, b) => {
+    const { key, direction } = analyticsSort;
+    const valA = a[key as keyof typeof a];
+    const valB = b[key as keyof typeof b];
+
+    if (valA === undefined || valB === undefined) return 0;
+    if (valA < valB) return direction === 'asc' ? -1 : 1;
+    if (valA > valB) return direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const toggleSort = (key: string) => {
+    setAnalyticsSort(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc'
+    }));
+  };
 
   /* ─── Stat cards data ─── */
   const stats = [
@@ -592,6 +617,77 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
+              {/* Historical Item Sales Table */}
+              <div className="rounded-2xl border border-white/10 bg-[#0d1117] overflow-hidden shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+                <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <ShoppingCart size={16} className="text-amber-400" />
+                    Historical Item Sales
+                  </h3>
+                  <div className="text-[10px] uppercase font-bold text-white/20 tracking-widest bg-white/5 px-2 py-1 rounded">
+                    Sortable by Column
+                  </div>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-[#141f30] border-b border-white/10 text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">
+                      <tr>
+                        <th onClick={() => toggleSort('name')} className="px-6 py-4 cursor-pointer hover:text-amber-400 transition-colors">
+                          <div className="flex items-center gap-2">
+                            Article Name {analyticsSort.key === 'name' && (analyticsSort.direction === 'asc' ? '↑' : '↓')}
+                          </div>
+                        </th>
+                        <th onClick={() => toggleSort('qty')} className="px-6 py-4 cursor-pointer hover:text-amber-400 transition-colors">
+                          <div className="flex items-center gap-2">
+                            Quantity {analyticsSort.key === 'qty' && (analyticsSort.direction === 'asc' ? '↑' : '↓')}
+                          </div>
+                        </th>
+                        <th onClick={() => toggleSort('price')} className="px-6 py-4 cursor-pointer hover:text-amber-400 transition-colors">
+                          <div className="flex items-center gap-2">
+                            Unit Price {analyticsSort.key === 'price' && (analyticsSort.direction === 'asc' ? '↑' : '↓')}
+                          </div>
+                        </th>
+                        <th onClick={() => toggleSort('date')} className="px-6 py-4 cursor-pointer hover:text-amber-400 transition-colors text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            Date & Time {analyticsSort.key === 'date' && (analyticsSort.direction === 'asc' ? '↑' : '↓')}
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {sortedAllSales.length > 0 ? (
+                        sortedAllSales.map((sale, idx) => (
+                          <tr key={idx} className="hover:bg-white/[0.02] transition-colors group">
+                            <td className="px-6 py-5">
+                                <span className="font-bold text-white group-hover:text-amber-400 transition-colors">{sale.name}</span>
+                            </td>
+                            <td className="px-6 py-5">
+                              <span className="inline-flex items-center rounded-lg bg-amber-400/5 border border-amber-400/10 px-2.5 py-1 text-[11px] font-black text-amber-400">
+                                {sale.qty}x
+                              </span>
+                            </td>
+                            <td className="px-6 py-5 text-xs font-medium text-white/40">RM {Number(sale.price).toFixed(2)}</td>
+                            <td className="px-6 py-5 text-right">
+                                <span className="inline-flex items-center gap-2 text-[10px] font-black text-white/20 uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md group-hover:bg-amber-400/10 group-hover:text-amber-400/60 transition-all font-mono">
+                                    {sale.date}
+                                </span>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={4} className="px-6 py-20 text-center">
+                              <div className="flex flex-col items-center justify-center text-white/10">
+                                 <Package size={40} strokeWidth={1} className="mb-4 opacity-20" />
+                                 <p className="text-[10px] font-black uppercase tracking-[0.3em]">No Historical Data Available</p>
+                              </div>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           )}
 
