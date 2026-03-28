@@ -7,45 +7,12 @@ import json
 import os
 
 # Firebase / Firestore
-import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_client import get_db
 
-# WebSocket imports
+# WebSocket & Threading imports
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import threading
-
-
-# ── Firebase init ────────────────────────────────────────────────
-def _get_db():
-    """Return a Firestore client, initialising the app on first call."""
-    if not firebase_admin._apps:
-        # 1. Try environment variable with raw JSON content
-        cred_json = os.getenv("FIREBASE_CREDENTIALS_JSON")
-        if cred_json:
-            try:
-                from json import loads
-                cred_dict = loads(cred_json)
-                cred = credentials.Certificate(cred_dict)
-                firebase_admin.initialize_app(cred)
-            except Exception as e:
-                print(f"Error initializing Firebase from env var: {e}")
-        
-        # 2. Fallback to service-account JSON file path
-        if not firebase_admin._apps:
-            sa_path = os.getenv(
-                "FIREBASE_SERVICE_ACCOUNT_PATH",
-                os.path.join(
-                    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
-                    "restaurant-2ef10-firebase-adminsdk-fbsvc-6887285a18.json",
-                ),
-            )
-            if os.path.exists(sa_path):
-                cred = credentials.Certificate(sa_path)
-                firebase_admin.initialize_app(cred)
-            else:
-                firebase_admin.initialize_app()
-    return firestore.client()
 
 
 # ── Helpers ──────────────────────────────────────────────────────
@@ -313,7 +280,7 @@ def mark_order_paid(request, order_id):
 @require_http_methods(["GET"])
 def analytics(request):
     try:
-        db = _get_db()
+        db = get_db()
         from datetime import date
         today_date = date.today()
         
@@ -449,7 +416,7 @@ def analytics(request):
 def db_check(request):
     """Diagnostic endpoint to check Firestore content from Render."""
     try:
-        db = _get_db()
+        db = get_db()
         results = {}
         for coll in ["orders", "menuItems", "menu_items", "categories", "reviews"]:
             docs = list(db.collection(coll).limit(1).stream())
