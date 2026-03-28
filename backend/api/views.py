@@ -402,13 +402,19 @@ def analytics(request):
             "today_sales": today_sales,
             "all_sales": all_sales,
         }
-        return JsonResponse(analytics_data)
+        response = JsonResponse(analytics_data)
     except Exception as e:
         import traceback
-        return JsonResponse({
+        response = JsonResponse({
             "error": str(e), 
             "traceback": traceback.format_exc()
         }, status=500)
+    
+    # Add Cache-Control to prevent stale analytics
+    response["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response["Pragma"] = "no-cache"
+    response["Expires"] = "0"
+    return response
 
 
 @csrf_exempt
