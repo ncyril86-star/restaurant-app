@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import useSWR from 'swr';
 import { auth, db } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
@@ -38,7 +38,7 @@ type AnalyticsData = {
   category_sales?: { category: string; sales: number }[];
   top_items?: { name: string; sales: number; image?: string }[];
   today_sales?: { name: string; qty: number; price: number; time: string }[];
-  all_sales?: { name: string; qty: number; price: number; date: string }[];
+  all_sales?: { name: string; qty: number; price: number; date: string; orderId: string }[];
 };
 
 /* ───────────────────── Fetch helper ───────────────────── */
@@ -203,26 +203,53 @@ export default function AdminDashboard() {
     direction: 'desc'
   });
 
-  const filteredAllSales = (analytics.all_sales || []).filter(sale => {
-    if (dateFilter === 'all') return true;
-    
-    const saleDate = new Date(sale.date);
-    const now = new Date();
-    
-    // Normalize dates to midnight for accurate day-based filtering
-    const saleMidnight = new Date(saleDate.getFullYear(), saleDate.getMonth(), saleDate.getDate());
-    const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
-    const diffTime = todayMidnight.getTime() - saleMidnight.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (dateFilter === 'yesterday') return diffDays === 1;
-    if (dateFilter === '3days') return diffDays <= 3;
-    if (dateFilter === 'week') return diffDays <= 7;
-    if (dateFilter === 'month') return diffDays <= 30;
-    
-    return true;
-  });
+  const filteredAllSales = useMemo(() => {
+    return (analytics.all_sales || []).filter(sale => {
+      if (dateFilter === 'all') return true;
+
+      const saleDate = new Date(sale.date);
+      const now = new Date();
+
+      // Normalize dates to midnight for accurate day-based filtering
+      const saleMidnight = new Date(saleDate.getFullYear(), saleDate.getMonth(), saleDate.getDate());
+      const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      const diffTime = todayMidnight.getTime() - saleMidnight.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      if (dateFilter === 'yesterday') return diffDays === 1;
+      if (dateFilter === '3days') return diffDays <= 3;
+      if (dateFilter === 'week') return diffDays <= 7;
+      if (dateFilter === 'month') return diffDays <= 30;
+
+      return true;
+    });
+  }, [analytics.all_sales, dateFilter]);
+
+
+  // Calculate filtered stats dynamically
+  const filteredStats = useMemo(() => {
+    const totalRevenue = filteredAllSales.reduce((sum, sale) => sum + (sale.price * sale.qty), 0);
+    const uniqueOrders = new Set(filteredAllSales.map(sale => sale.orderId)).size;
+    const avgOrderValue = uniqueOrders > 0 ? totalRevenue / uniqueOrders : 0;
+
+    // Best selling items calculation from filtered list
+    const itemMap: Record<string, { sales: number; image?: string }> = {};
+    filteredAllSales.forEach(sale => {
+       if (!itemMap[sale.name]) {
+           itemMap[sale.name] = { sales: 0 };
+       }
+       itemMap[sale.name].sales += sale.qty;
+    });
+
+    const topItems = Object.entries(itemMap).map(([name, data]) => ({
+        name,
+        sales: data.sales,
+        image: '' // we could lookup images from original analytics.top_items or filteredAllSales if available
+    })).sort((a,b) => b.sales - a.sales);
+
+    return { totalRevenue, avgOrderValue, totalOrders: uniqueOrders, topItems };
+  }, [filteredAllSales]);
 
   const sortedAllSales = [...filteredAllSales].sort((a, b) => {
     const { key, direction } = analyticsSort;
@@ -383,7 +410,7 @@ export default function AdminDashboard() {
                 {stats.map((stat, idx) => {
                   const Icon = stat.icon;
                   // Mock percentage for visual flair matching the user's example
-                  const progress = 65 + (idx * 10); 
+                  const progress = 65 + (idx * 10);
                   const strokeDash = 113; // 2 * PI * 18
                   const offset = strokeDash - (strokeDash * progress) / 100;
 
@@ -526,38 +553,66 @@ export default function AdminDashboard() {
           </div>
         )}
 
+
           {/* ═══════════ ANALYTICS TAB ═══════════ */}
           {currentTab === 'analytics' && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              
+
+              {/* Global Date Filter */}
+              <div className="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-md">
+                 <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-amber-400/10 flex items-center justify-center border border-amber-400/20">
+                        <TrendingUp size={20} className="text-amber-400" />
+                    </div>
+                    <div>
+                        <h2 className="text-sm font-bold text-white uppercase tracking-wider">Analytics Overview</h2>
+                        <p className="text-[10px] font-medium text-white/30 uppercase tracking-[0.2em] mt-0.5">Performance Insights</p>
+                    </div>
+                 </div>
+                 <div className="flex items-center gap-3 bg-white/5 p-1.5 rounded-xl border border-white/5">
+                    <span className="text-[10px] font-black text-white/20 uppercase tracking-widest pl-2">Filter Range:</span>
+                    <select
+                        value={dateFilter}
+                        onChange={(e) => setDateFilter(e.target.value)}
+                        className="bg-[#1a1f2e] border border-white/10 rounded-lg px-4 py-2 text-xs text-amber-400 focus:outline-none focus:border-amber-400 transition-all font-black cursor-pointer hover:bg-[#252c3d] min-w-[140px] shadow-lg"
+                    >
+                        <option value="all">All Time</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="3days">Last 3 Days</option>
+                        <option value="week">Last Week</option>
+                        <option value="month">Last Month</option>
+                    </select>
+                 </div>
+              </div>
+
               {/* Analytics Header Cards */}
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-amber-500/10 to-orange-500/10 p-6 shadow-lg shadow-amber-500/5">
                   <p className="text-xs font-semibold text-amber-400 uppercase tracking-wider mb-2">Best Selling Item</p>
                   <h3 className="text-2xl font-black text-white">
-                    {analytics.top_items && analytics.top_items.length > 0 ? analytics.top_items[0].name : 'N/A'}
+                    {filteredStats.topItems.length > 0 ? filteredStats.topItems[0].name : 'N/A'}
                   </h3>
                   <p className="text-sm text-white/50 mt-1">
-                    {analytics.top_items && analytics.top_items.length > 0 ? `${analytics.top_items[0].sales} units sold` : 'No sales yet'}
+                    {filteredStats.topItems.length > 0 ? `${filteredStats.topItems[0].sales} units sold` : 'No sales in range'}
                   </p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-                  <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">Total Revenue</p>
-                  <h3 className="text-2xl font-black text-white">RM {(analytics.total_revenue ?? 0).toLocaleString()}</h3>
+                  <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">Filtered Revenue</p>
+                  <h3 className="text-2xl font-black text-white">RM {filteredStats.totalRevenue.toLocaleString()}</h3>
                   <p className="text-sm text-emerald-400 mt-1 flex items-center gap-1">
-                    <TrendingUp size={14} /> Overall Performance
+                    <TrendingUp size={14} /> {dateFilter === 'all' ? 'Overall' : 'Selected range'}
                   </p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
                   <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">Avg. Order Value</p>
-                  <h3 className="text-2xl font-black text-white">RM {(analytics.avg_order_value ?? 0).toFixed(2)}</h3>
+                  <h3 className="text-2xl font-black text-white">RM {filteredStats.avgOrderValue.toFixed(2)}</h3>
                   <p className="text-sm text-blue-400 mt-1 flex items-center gap-1">
-                    <ShoppingCart size={14} /> Per customer visit
+                    <ShoppingCart size={14} /> {filteredStats.totalOrders} total orders
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {/* Top Selling Items (Visual Gallery) */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between px-2">
@@ -567,16 +622,12 @@ export default function AdminDashboard() {
                     </h3>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                    {analytics.top_items?.slice(0, 4).map((item, idx) => (
+                    {filteredStats.topItems.slice(0, 4).map((item, idx) => (
                       <div key={item.name} className="group overflow-hidden rounded-2xl border border-white/10 bg-[#0d1117] transition-all hover:border-amber-400/30 hover:shadow-2xl hover:shadow-amber-900/10">
                         <div className="relative h-40 overflow-hidden">
-                          {item.image ? (
-                            <img src={item.image} alt={item.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                          ) : (
-                            <div className="flex h-full w-full items-center justify-center bg-white/5 text-white/20">
+                          <div className="flex h-full w-full items-center justify-center bg-white/5 text-white/20">
                               <ChefHat size={40} />
-                            </div>
-                          )}
+                          </div>
                           <div className="absolute top-3 left-3 flex h-8 w-8 items-center justify-center rounded-lg bg-black/60 backdrop-blur-md text-xs font-bold text-amber-400 border border-white/10">
                             #{idx + 1}
                           </div>
@@ -589,20 +640,20 @@ export default function AdminDashboard() {
                               <p className="text-lg font-black text-amber-400">{item.sales}</p>
                             </div>
                             <div className="h-10 w-10 rounded-full border-2 border-white/5 flex items-center justify-center relative">
-                                <span className="text-[10px] font-bold text-white/60">{(item.sales / (analytics.total_orders || 1) * 100).toFixed(0)}%</span>
+                                <span className="text-[10px] font-bold text-white/60">{(item.sales / (filteredStats.topItems.reduce((s,i)=>s+i.sales,0) || 1) * 100).toFixed(0)}%</span>
                                 <svg className="absolute inset-0 -rotate-90">
                                   <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/5" />
-                                  <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray={113} strokeDashoffset={113 - (113 * (item.sales / (analytics.total_orders || 1)))} className="text-amber-400 transition-all duration-1000" />
+                                  <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray={113} strokeDashoffset={113 - (113 * (item.sales / (filteredStats.topItems.reduce((s,i)=>s+i.sales,0) || 1)))} className="text-amber-400 transition-all duration-1000" />
                                 </svg>
                             </div>
                           </div>
                         </div>
                       </div>
                     ))}
-                    {(!analytics.top_items || analytics.top_items.length === 0) && (
+                    {filteredStats.topItems.length === 0 && (
                       <div className="col-span-full py-12 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-2xl text-white/20">
                         <Package size={40} className="mb-2" />
-                        <p className="text-sm">No sales data available yet</p>
+                        <p className="text-sm">No sales data in this range</p>
                       </div>
                     )}
                   </div>
@@ -611,27 +662,10 @@ export default function AdminDashboard() {
                 {/* Historical Item Sales Table (Full Width) */}
                 <div className="rounded-2xl border border-white/10 bg-[#0d1117] overflow-hidden shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
                   <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
-                    <div className="flex items-center gap-6">
-                        <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                            <ShoppingCart size={16} className="text-amber-400" />
-                            Historical Item Sales
-                        </h3>
-                        <div className="h-4 w-[1px] bg-white/10" />
-                        <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-bold text-white/30 uppercase tracking-wider">Filter Date:</span>
-                            <select
-                                value={dateFilter}
-                                onChange={(e) => setDateFilter(e.target.value)}
-                                className="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-xs text-amber-400 focus:outline-none focus:border-amber-400 transition-all font-black cursor-pointer hover:bg-white/10 appearance-none min-w-[120px]"
-                            >
-                                <option value="all" className="bg-[#1a1f2e]">All Time</option>
-                                <option value="yesterday" className="bg-[#1a1f2e]">Yesterday</option>
-                                <option value="3days" className="bg-[#1a1f2e]">Last 3 Days</option>
-                                <option value="week" className="bg-[#1a1f2e]">Last Week</option>
-                                <option value="month" className="bg-[#1a1f2e]">Last Month</option>
-                            </select>
-                        </div>
-                    </div>
+                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                        <ShoppingCart size={16} className="text-amber-400" />
+                        Historical Item Sales
+                    </h3>
                     <div className="text-[10px] uppercase font-bold text-white/20 tracking-widest bg-white/5 px-2 py-1 rounded">
                       {filteredAllSales.length} Total Entries Found
                     </div>
