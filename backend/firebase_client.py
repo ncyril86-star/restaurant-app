@@ -20,22 +20,37 @@ from google.auth.exceptions import DefaultCredentialsError
 
 @lru_cache
 def _init_app() -> firebase_admin.App:
+    # 1. Try to get existing app to avoid "app already exists" errors
+    # We use a named app "django-backend" for isolation
+    app_name = "django-backend"
+    try:
+        return firebase_admin.get_app(app_name)
+    except ValueError:
+        pass # App not initialized yet
+
     # Option 1: full JSON in env (safer for local dev with .env)
     sa_json = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON") or os.getenv("FIREBASE_CREDENTIALS_JSON")
     if sa_json:
-        cred_dict = json.loads(sa_json)
-        cred = credentials.Certificate(cred_dict)  # type: ignore[arg-type]
-        return firebase_admin.initialize_app(cred, name="django-backend")
+        try:
+            cred_dict = json.loads(sa_json)
+            cred = credentials.Certificate(cred_dict)  # type: ignore[arg-type]
+            return firebase_admin.initialize_app(cred, name=app_name)
+        except Exception as e:
+            # If JSON parsing fails, we continue to other options
+            print(f"DEBUG: Firebase JSON parsing failed: {e}")
 
     # Option 2: service account JSON path
     cred_path = os.getenv("FIREBASE_SERVICE_ACCOUNT_PATH") or os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-    if cred_path:
+    if cred_path and os.path.exists(cred_path):
         cred = credentials.Certificate(cred_path)
-        return firebase_admin.initialize_app(cred, name="django-backend")
+        return firebase_admin.initialize_app(cred, name=app_name)
 
-    # Fallback: default app (works on GCP environments with default creds)
-    # If no ADC is present, Firestore calls will raise DefaultCredentialsError.
-    return firebase_admin.initialize_app(name="django-backend")
+    # Fallback: default app (works on GCP/Render environments with default creds)
+    try:
+        return firebase_admin.initialize_app(name=app_name)
+    except Exception as e:
+        print(f"DEBUG: Firebase default init failed: {e}")
+        raise
 
 
 @lru_cache
