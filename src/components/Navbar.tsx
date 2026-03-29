@@ -31,84 +31,86 @@ export default function Navbar({ cart }: NavbarProps) {
   ];
 
   return (
-    <header 
-      className={`sticky top-0 z-50 border-b border-white/10 transition-all duration-300 ${
-        isScrolled ? 'bg-[#0b0f19]/90 backdrop-blur-md py-2' : 'bg-[#0b0f19]/80 backdrop-blur-sm py-3'
-      }`}
-    >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative overflow-hidden rounded-xl h-9 w-9">
-            <img
-              src="https://images.unsplash.com/photo-1644920437956-388353e26e28?q=80&w=627&auto=format&fit=crop"
-              alt="MakanSedap Logo"
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-amber-400/10 group-hover:bg-transparent transition-colors" />
-          </div>
-          <div className="leading-tight">
-            <p className="text-sm font-bold tracking-wider text-amber-300 group-hover:text-amber-200 transition-colors">
-              MakanSedap
-            </p>
-          </div>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-8 text-sm font-medium text-white/70 md:flex">
-          {navLinks.map((link) => (
-            <div key={link.name} className="relative group py-2">
-              {link.hasDropdown ? (
-                <div className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors">
-                  <Link href={link.href}>{link.name}</Link>
-                  <ChevronDown size={14} className="transition-transform duration-300 group-hover:rotate-180" />
-                  
-                  {/* Dropdown Content */}
-                  <div className="absolute left-0 top-full mt-1 w-48 rounded-xl border border-white/10 bg-[#0b0f19]/95 backdrop-blur-md shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top scale-95 group-hover:scale-100">
-                    <div className="py-2 flex flex-col">
-                      <Link href="/menu?category=main" className="px-4 py-2 hover:bg-white/10 hover:text-amber-300 transition-colors">Main Dish</Link>
-                      <Link href="/menu?category=dessert" className="px-4 py-2 hover:bg-white/10 hover:text-amber-300 transition-colors">Desserts</Link>
-                      <Link href="/menu?category=drinks" className="px-4 py-2 hover:bg-white/10 hover:text-amber-300 transition-colors">Drinks</Link>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <Link href={link.href} className="hover:text-white transition-colors">
-                  {link.name}
-                </Link>
-              )}
+    <>
+      <header 
+        className={`sticky top-0 z-50 border-b border-white/10 transition-all duration-300 ${
+          isScrolled ? 'bg-[#0b0f19]/90 backdrop-blur-md py-2' : 'bg-[#0b0f19]/80 backdrop-blur-sm py-3'
+        }`}
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative overflow-hidden rounded-xl h-9 w-9">
+              <img
+                src="https://images.unsplash.com/photo-1644920437956-388353e26e28?q=80&w=627&auto=format&fit=crop"
+                alt="MakanSedap Logo"
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-amber-400/10 group-hover:bg-transparent transition-colors" />
             </div>
-          ))}
-        </nav>
-
-        {/* Right Actions */}
-        <div className="flex items-center gap-4">
-          <Link
-            href="/view-order"
-            className="hidden sm:flex rounded-full bg-amber-400 px-5 py-2 text-xs font-black text-black shadow-[0_8px_20px_rgba(245,158,11,0.3)] hover:bg-amber-300 hover:scale-105 active:scale-95 transition-all items-center gap-2"
-          >
-            VIEW ORDER
-            {cartCount > 0 && (
-              <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-black/10 px-1 text-[10px] font-bold border border-black/5">
-                {cartCount}
-              </span>
-            )}
+            <div className="leading-tight">
+              <p className="text-sm font-bold tracking-wider text-amber-300 group-hover:text-amber-200 transition-colors">
+                MakanSedap
+              </p>
+            </div>
           </Link>
 
-          {/* Mobile Menu Toggle */}
-          <button 
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="flex items-center justify-center p-2 rounded-xl bg-white/5 border border-white/10 text-white md:hidden hover:bg-white/10 transition-colors"
-            aria-label="Toggle Menu"
-          >
-            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          {/* Desktop Navigation */}
+          <nav className="hidden items-center gap-8 text-sm font-medium text-white/70 md:flex">
+            {navLinks.map((link) => (
+              <div key={link.name} className="relative group py-2">
+                {link.hasDropdown ? (
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors">
+                    <Link href={link.href}>{link.name}</Link>
+                    <ChevronDown size={14} className="transition-transform duration-300 group-hover:rotate-180" />
+                    
+                    {/* Dropdown Content */}
+                    <div className="absolute left-0 top-full mt-1 w-48 rounded-xl border border-white/10 bg-[#0b0f19]/95 backdrop-blur-md shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top scale-95 group-hover:scale-100">
+                      <div className="py-2 flex flex-col">
+                        <Link href="/menu?category=main" className="px-4 py-2 hover:bg-white/10 hover:text-amber-300 transition-colors">Main Dish</Link>
+                        <Link href="/menu?category=dessert" className="px-4 py-2 hover:bg-white/10 hover:text-amber-300 transition-colors">Desserts</Link>
+                        <Link href="/menu?category=drinks" className="px-4 py-2 hover:bg-white/10 hover:text-amber-300 transition-colors">Drinks</Link>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <Link href={link.href} className="hover:text-white transition-colors">
+                    {link.name}
+                  </Link>
+                )}
+              </div>
+            ))}
+          </nav>
+
+          {/* Right Actions */}
+          <div className="flex items-center gap-4">
+            <Link
+              href="/view-order"
+              className="hidden sm:flex rounded-full bg-amber-400 px-5 py-2 text-xs font-black text-black shadow-[0_8px_20px_rgba(245,158,11,0.3)] hover:bg-amber-300 hover:scale-105 active:scale-95 transition-all items-center gap-2"
+            >
+              VIEW ORDER
+              {cartCount > 0 && (
+                <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-black/10 px-1 text-[10px] font-bold border border-black/5">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+
+            {/* Mobile Menu Toggle */}
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="flex items-center justify-center p-2 rounded-xl bg-white/5 border border-white/10 text-white md:hidden hover:bg-white/10 transition-colors"
+              aria-label="Toggle Menu"
+            >
+              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
-      </div>
+      </header>
 
       {/* Mobile Menu Overlay (Backdrop + Drawer) */}
       <div 
-        className={`fixed inset-0 z-40 transition-all duration-500 md:hidden ${
+        className={`fixed inset-0 z-[100] transition-all duration-500 md:hidden ${
           isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       >
@@ -120,13 +122,14 @@ export default function Navbar({ cart }: NavbarProps) {
         
         {/* Drawer */}
         <div 
-          className={`absolute right-0 top-0 h-full w-[280px] bg-white text-black shadow-2xl transition-transform duration-500 ease-out transform ${
+          className={`absolute right-0 top-0 h-full w-[85%] max-w-[420px] bg-white text-black shadow-[0_0_50px_rgba(0,0,0,0.3)] border-l border-gray-100 transition-transform duration-500 ease-out transform ${
             isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
+          style={{ backgroundColor: '#ffffff', opacity: 1 }}
         >
           <div className="flex flex-col h-full pt-6">
             {/* Close Button Inside Drawer */}
-            <div className="flex justify-end px-6 mb-8">
+            <div className="flex justify-end px-6 mb-4">
               <button 
                 onClick={() => setIsMenuOpen(false)}
                 className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -136,7 +139,7 @@ export default function Navbar({ cart }: NavbarProps) {
               </button>
             </div>
 
-            <nav className="flex flex-col px-6 space-y-2">
+            <nav className="flex flex-col px-6 space-y-1">
               {navLinks.map((link, idx) => (
                 <Link
                   key={link.name}
@@ -153,7 +156,7 @@ export default function Navbar({ cart }: NavbarProps) {
               ))}
             </nav>
 
-            <div className={`mt-auto p-6 transition-all duration-500 transform ${
+            <div className={`mt-auto p-6 pb-12 transition-all duration-500 transform ${
               isMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`} style={{ transitionDelay: '300ms' }}>
               <Link
@@ -168,6 +171,6 @@ export default function Navbar({ cart }: NavbarProps) {
           </div>
         </div>
       </div>
-    </header>
+    </>
   );
 }
