@@ -159,15 +159,23 @@ function SuccessPage() {
 
           {/* Order info */}
           <div className="px-6 py-4 border-b border-white/10">
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-2 gap-y-4 gap-x-8 text-sm">
               <div>
                 <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Order ID</p>
-                <p className="font-mono text-white/90 text-xs">{orderId.substring(0, 16)}...</p>
+                <p className="font-mono text-white/90 text-xs truncate max-w-[120px]">{orderId}</p>
               </div>
               <div className="text-right">
                 <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Date & Time</p>
-                <p className="text-white/90 text-xs">{dateStr}</p>
-                <p className="text-white/60 text-xs">{timeStr}</p>
+                <p className="text-white/90 text-xs font-medium">{dateStr}</p>
+                <p className="text-white/60 text-xs italic">{timeStr}</p>
+              </div>
+              <div>
+                <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Table Number</p>
+                <p className="text-amber-400 font-bold text-lg leading-tight">#{order?.tableNumber || 'N/A'}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Customer</p>
+                <p className="text-white/90 font-medium truncate">{order?.customerName || 'Guest'}</p>
               </div>
             </div>
           </div>

@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     console.log('🔴 ROUTE CALLED');
     
-    const { items, email, customerName, customerPhone } = await request.json();
+    const { items, email, customerName, customerPhone, tableNumber } = await request.json();
     console.log('🔴 Customer Email:', email);
     console.log('🔴 Items Count:', items?.length);
 
@@ -48,6 +48,7 @@ export async function POST(request: NextRequest) {
         customerName: customerName || '',
         customerPhone: customerPhone || '',
         customerEmail: email || '',
+        tableNumber: tableNumber || '',
         cartData: cartData.substring(0, 500),
       },
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,

@@ -36,6 +36,7 @@ function CheckoutPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [tableNumber, setTableNumber] = useState('');
   const [processing, setProcessing] = useState(false);
   const [toast, setToast] = useState<{ message: string, show: boolean }>({ message: '', show: false });
 
@@ -103,6 +104,12 @@ function CheckoutPage() {
       return;
     }
 
+    if (!tableNumber.trim()) {
+      setToast({ message: 'Table number is required', show: true });
+      setTimeout(() => setToast({ message: '', show: false }), 2000);
+      return;
+    }
+
     setProcessing(true);
 
     try {
@@ -117,6 +124,7 @@ function CheckoutPage() {
           customerName: name,
           customerEmail: email,
           customerPhone: phone,
+          tableNumber: tableNumber,
           total: total,
           status: 'pending_counter', // Initial status for counter
           paymentMethod: 'counter',
@@ -143,6 +151,7 @@ function CheckoutPage() {
           email: email,
           customerName: name,
           customerPhone: phone,
+          tableNumber: tableNumber,
           paymentMethod: 'fpx'
         }),
       });
@@ -201,7 +210,8 @@ function CheckoutPage() {
               <h3 className="text-sm text-white/80 mb-2">Customer</h3>
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" className="w-full rounded-lg bg-[#0f1724] border border-white/6 px-4 py-2 text-white mb-3" />
               <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Email address (for receipt)" className="w-full rounded-lg bg-[#0f1724] border border-white/6 px-4 py-2 text-white mb-3" />
-              <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" className="w-full rounded-lg bg-[#0f1724] border border-white/6 px-4 py-2 text-white" />
+              <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" className="w-full rounded-lg bg-[#0f1724] border border-white/6 px-4 py-2 text-white mb-3" />
+              <input value={tableNumber} onChange={(e) => setTableNumber(e.target.value)} placeholder="Table Number (Mandatory)" required className="w-full rounded-lg bg-[#0f1724] border-2 border-amber-400/50 px-4 py-2 text-white placeholder:text-amber-400/40 focus:border-amber-400 focus:outline-none" />
             </div>
 
             <div className="mt-6">

@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
       customerName: metadata.customerName || '',
       customerEmail: metadata.customerEmail || session.customer_email || '',
       customerPhone: metadata.customerPhone || '',
+      tableNumber: metadata.tableNumber || '',
       total: (session.amount_total || 0) / 100,
       status: 'paid',
       paymentMethod: 'fpx', 
