@@ -60,7 +60,7 @@ function CheckoutPage() {
 
         const cartMap = JSON.parse(storedCart);
         const itemIds = Object.keys(cartMap);
-        
+
         if (itemIds.length === 0) {
           setOrderItems([]);
           setLoading(false);
@@ -71,7 +71,7 @@ function CheckoutPage() {
         const { collection, getDocs } = await import('firebase/firestore');
         const snap = await getDocs(collection(db, 'menuItems'));
         const allItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        
+
         const resolved = itemIds.map(id => {
           const base = allItems.find(it => it.id === id);
           if (!base) return null;
@@ -115,7 +115,7 @@ function CheckoutPage() {
     try {
       // 1. Create the order document if Pay at Counter
       let finalOrderId = '';
-      
+
       if (paymentMethod === 'counter') {
         const { collection, addDoc } = await import('firebase/firestore');
         const colRef = collection(db, 'orders');
@@ -211,14 +211,14 @@ function CheckoutPage() {
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" className="w-full rounded-lg bg-[#0f1724] border border-white/6 px-4 py-2 text-white mb-3" />
               <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Email address (for receipt)" className="w-full rounded-lg bg-[#0f1724] border border-white/6 px-4 py-2 text-white mb-3" />
               <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" className="w-full rounded-lg bg-[#0f1724] border border-white/6 px-4 py-2 text-white mb-3" />
-              <input value={tableNumber} onChange={(e) => setTableNumber(e.target.value)} placeholder="Table Number (Mandatory)" required className="w-full rounded-lg bg-[#0f1724] border-2 border-amber-400/50 px-4 py-2 text-white placeholder:text-amber-400/40 focus:border-amber-400 focus:outline-none" />
+              <input value={tableNumber} onChange={(e) => setTableNumber(e.target.value)} placeholder="Table Number" required className="w-full rounded-lg bg-[#0f1724] border border-white/6 px-4 py-2 text-white mb-3" />
             </div>
 
             <div className="mt-6">
               <h3 className="text-sm text-white/80 mb-2">Payment notice</h3>
               <p className="text-sm text-white/70">
-                {paymentMethod === 'counter' 
-                  ? "Your order will be sent to the kitchen. Please pay at the counter." 
+                {paymentMethod === 'counter'
+                  ? "Your order will be sent to the kitchen. Please pay at the counter."
                   : "You'll be redirected to your bank to complete the payment."}
               </p>
             </div>
