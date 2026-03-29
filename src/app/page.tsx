@@ -5,7 +5,6 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, useRef, Suspense } from 'react';
 import { ChefHat, Utensils, ShoppingCart, Headset } from 'lucide-react';
 import { MapPin, Phone, Mail } from 'lucide-react';
-import Navbar from '@/components/Navbar';
 
 function LandingPage() {
   const [cart, setCart] = useState<{ [key: string]: number }>({});
@@ -103,7 +102,7 @@ function LandingPage() {
         .btn-hover:hover::before { left: 100%; }
       `}</style>
 
-      <Navbar cart={cart} />
+
 
       {/* Hero - Full Screen */}
       <section
