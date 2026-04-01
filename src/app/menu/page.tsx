@@ -262,8 +262,8 @@ function MenuPage() {
         </div>
       </div>
       {toast.show && (
-        <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 transform">
-          <div className="rounded-full bg-white/6 px-5 py-3 text-sm font-semibold text-white shadow-lg backdrop-blur-md border border-white/10">
+        <div className="fixed top-24 left-1/2 z-50 -translate-x-1/2 transform animate-slide-up">
+          <div className="rounded-full bg-[rgba(22,163,74,0.9)] px-5 py-3 text-sm font-semibold text-white shadow-[0_8px_30px_rgba(22,163,74,0.3)] backdrop-blur-md border border-[#22C55E]">
             {toast.message}
           </div>
         </div>
