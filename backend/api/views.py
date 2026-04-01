@@ -290,8 +290,8 @@ def mark_order_paid(request, order_id):
 def analytics(request):
     try:
         db = get_db()
-        from datetime import date
-        today_date = date.today()
+        from django.utils import timezone
+        today_date = timezone.localtime().date()
         
         today_sales = []
         all_sales = []
@@ -324,6 +324,12 @@ def analytics(request):
                         pass
             
             if created_dt:
+                if timezone.is_aware(created_dt):
+                    created_dt = timezone.localtime(created_dt)
+                elif not timezone.is_aware(created_dt) and hasattr(created_dt, 'tzinfo'):
+                    created_dt = timezone.make_aware(created_dt)
+                    created_dt = timezone.localtime(created_dt)
+                
                 try:
                     if created_dt.date() == today_date:
                         is_today = True
