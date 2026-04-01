@@ -209,7 +209,7 @@ function CheckoutPage() {
             <div className="mt-6">
               <h3 className="text-sm text-white/80 mb-2">Customer</h3>
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" className="w-full rounded-lg bg-[#0f1724] border border-white/6 px-4 py-2 text-white mb-3" />
-              <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Email address (for receipt)" className="w-full rounded-lg bg-[#0f1724] border border-white/6 px-4 py-2 text-white mb-3" />
+              <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Email address" className="w-full rounded-lg bg-[#0f1724] border border-white/6 px-4 py-2 text-white mb-3" />
               <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" className="w-full rounded-lg bg-[#0f1724] border border-white/6 px-4 py-2 text-white mb-3" />
               <input value={tableNumber} onChange={(e) => setTableNumber(e.target.value)} placeholder="Table Number" required className="w-full rounded-lg bg-[#0f1724] border border-white/6 px-4 py-2 text-white mb-3" />
             </div>
@@ -269,8 +269,10 @@ function CheckoutPage() {
         </div>
 
         {toast.show && (
-          <div className="fixed bottom-8 right-8 z-50">
-            <div className="rounded-full bg-green-600 text-white px-4 py-2 font-semibold">{toast.message}</div>
+          <div className="fixed top-24 left-1/2 z-50 -translate-x-1/2 transform animate-slide-up">
+            <div className="rounded-full bg-[rgba(22,163,74,0.9)] px-5 py-3 text-sm font-semibold text-white shadow-[0_8px_30px_rgba(22,163,74,0.3)] backdrop-blur-md border border-[#22C55E]">
+              {toast.message}
+            </div>
           </div>
         )}
       </main>
