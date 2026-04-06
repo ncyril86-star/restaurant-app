@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronDown, ChevronRight, ShoppingCart } from 'lucide-react';
 
 interface NavbarProps {
@@ -12,6 +13,8 @@ export default function Navbar({ cart: initialCart }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const pathname = usePathname();
+  const isMenuPage = pathname?.startsWith('/menu');
 
   // Sync cart count from localStorage or props
   useEffect(() => {
@@ -190,18 +193,20 @@ export default function Navbar({ cart: initialCart }: NavbarProps) {
               ))}
             </nav>
 
-            <div className={`mt-auto p-6 pb-12 transition-all duration-500 transform ${
-              isMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-            }`} style={{ transitionDelay: '300ms' }}>
-              <Link
-                href="/view-order"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex w-full items-center justify-center gap-3 rounded-full bg-amber-400 py-4 text-sm font-black text-black shadow-xl hover:bg-amber-300 transition-colors"
-              >
-                <ShoppingCart size={18} />
-                VIEW ORDER ({cartCount})
-              </Link>
-            </div>
+            {!isMenuPage && (
+              <div className={`mt-auto p-6 pb-12 transition-all duration-500 transform ${
+                isMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+              }`} style={{ transitionDelay: '300ms' }}>
+                <Link
+                  href="/view-order"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex w-full items-center justify-center gap-3 rounded-full bg-amber-400 py-4 text-sm font-black text-black shadow-xl hover:bg-amber-300 transition-colors"
+                >
+                  <ShoppingCart size={18} />
+                  VIEW ORDER ({cartCount})
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
