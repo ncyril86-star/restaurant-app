@@ -168,13 +168,27 @@ function MenuPage() {
     const c = String(cat).toLowerCase();
     return c.includes(selectedCategory.toLowerCase()) || c === selectedCategory.toLowerCase();
   });
+  const cartCount = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
 
   return (
     <div className="min-h-screen bg-[#0b0f19] text-white overflow-x-hidden">
       {/* Navbar is now global in layout.tsx */}
 
       <div className="mx-auto max-w-7xl p-6">
-        <h1 className="text-4xl font-extrabold text-white mb-8">Menu</h1>
+        <div className="mb-8 flex items-center justify-between gap-3">
+          <h1 className="text-4xl font-extrabold text-white">Menu</h1>
+          <Link
+            href="/view-order"
+            className="inline-flex items-center gap-2 rounded-full bg-amber-400 px-4 py-2 text-xs font-black text-black shadow-[0_8px_20px_rgba(245,158,11,0.3)] transition-all hover:bg-amber-300 hover:scale-105 active:scale-95"
+          >
+            VIEW ORDER
+            {cartCount > 0 && (
+              <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full border border-black/5 bg-black/10 px-1 text-[10px] font-bold">
+                {cartCount}
+              </span>
+            )}
+          </Link>
+        </div>
         
         <div className="mb-6 flex flex-wrap items-center gap-3">
           {categories.map((cat) => (
