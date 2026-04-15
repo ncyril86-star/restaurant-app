@@ -303,7 +303,7 @@ function LandingPage() {
 
         <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 w-full lg:grid-cols-1 lg:items-center">
           <div
-            className={`animate-slide-left ${visibleSections.hero ? 'visible' : ''}`}
+            className={`animate-slide-left lg:-translate-y-6 ${visibleSections.hero ? 'visible' : ''}`}
             style={{ animationDelay: visibleSections.hero ? '0.1s' : '0s' }}
           >
             <h1 className="hero-premium-title mt-6 text-[3.2rem] sm:text-[4.4rem] lg:text-[5.8rem]">
