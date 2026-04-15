@@ -16,12 +16,11 @@ function LandingPage() {
     footer: false,
   });
   const tickerItems = [
-    'Western & Tradition fusion',
-    'Fresh Ingredient Daily',
-    'Dine-In & Takeaway',
+    'Dine-In - Takeaway - Delivery',
     'Halal Certified',
     'Open 7 Days a Week',
     "Miri's Favourite Restaurant",
+    'Western & Traditional Fusion',
   ];
 
   useEffect(() => {
@@ -245,16 +244,16 @@ function LandingPage() {
       </section>
 
       {/* Scrolling Ticker */}
-      <section className="border-y-4 border-red-500 bg-[#070d1b] py-3">
+      <section className="bg-[linear-gradient(90deg,#22020a_0%,#3a0310_45%,#24020b_100%)] py-4 shadow-[inset_0_1px_0_rgba(251,191,36,0.15),inset_0_-1px_0_rgba(251,191,36,0.18)]">
         <div className="ticker-wrap overflow-hidden whitespace-nowrap">
-          <div className="ticker-track flex items-center gap-6 px-6">
+          <div className="ticker-track flex items-center gap-10 px-8">
             {[...tickerItems, ...tickerItems].map((item, index) => (
               <span
                 key={`${item}-${index}`}
-                className="inline-flex items-center gap-6 text-sm font-semibold tracking-wide text-amber-200/95"
+                className="inline-flex items-center gap-10 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-amber-300/90"
               >
                 <span>{item}</span>
-                <span className="text-red-400/90">•</span>
+                <span className="text-amber-400/85">*</span>
               </span>
             ))}
           </div>
