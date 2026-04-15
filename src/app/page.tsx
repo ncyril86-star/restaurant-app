@@ -112,6 +112,83 @@ function LandingPage() {
 
         .btn-hover:hover::before { left: 100%; }
 
+        .hero-cta {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 9999px;
+          padding: 0.88rem 2.35rem;
+          font-family: 'Cinzel', 'Cormorant Garamond', 'Baskerville', serif;
+          font-size: 1.08rem;
+          font-weight: 700;
+          letter-spacing: 0.045em;
+          line-height: 1;
+          transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease, border-color 0.28s ease, color 0.28s ease, background 0.28s ease;
+          will-change: transform;
+        }
+
+        .hero-cta::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          opacity: 0;
+          transition: opacity 0.28s ease;
+          pointer-events: none;
+        }
+
+        .hero-cta:hover {
+          transform: translateY(-3px) scale(1.01);
+        }
+
+        .hero-cta:focus-visible {
+          outline: 2px solid rgba(250, 204, 21, 0.75);
+          outline-offset: 2px;
+        }
+
+        .hero-cta-primary {
+          color: #1b1405;
+          border: 1px solid rgba(255, 232, 166, 0.85);
+          background: linear-gradient(135deg, #ffd44d 0%, #f8be00 52%, #e9a700 100%);
+          box-shadow: 0 10px 28px rgba(224, 158, 20, 0.34), inset 0 1px 0 rgba(255, 251, 226, 0.58);
+        }
+
+        .hero-cta-primary:hover {
+          color: #120e04;
+          box-shadow: 0 14px 34px rgba(242, 174, 31, 0.46), inset 0 1px 0 rgba(255, 251, 226, 0.7);
+        }
+
+        .hero-cta-primary::after {
+          background: linear-gradient(120deg, transparent 18%, rgba(255, 246, 218, 0.5) 50%, transparent 82%);
+        }
+
+        .hero-cta-primary:hover::after {
+          opacity: 1;
+        }
+
+        .hero-cta-secondary {
+          color: #f6efe2;
+          border: 1px solid rgba(243, 226, 191, 0.26);
+          background: linear-gradient(145deg, rgba(35, 44, 67, 0.78), rgba(17, 24, 44, 0.72));
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 8px 24px rgba(7, 10, 21, 0.4);
+          backdrop-filter: blur(8px);
+        }
+
+        .hero-cta-secondary:hover {
+          border-color: rgba(249, 220, 163, 0.5);
+          color: #fff6e8;
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 12px 30px rgba(10, 14, 28, 0.48);
+        }
+
+        .hero-cta-secondary::after {
+          background: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.18), transparent 62%);
+        }
+
+        .hero-cta-secondary:hover::after {
+          opacity: 1;
+        }
+
         .ticker-track {
           width: max-content;
           animation: ticker-scroll 28s linear infinite;
@@ -245,13 +322,13 @@ function LandingPage() {
             <div className="mt-5 hidden lg:flex flex-wrap items-center gap-4">
               <Link
                 href={`/menu`}
-                className="btn-hover rounded-full bg-amber-400 px-8 py-3 text-base font-extrabold text-black hover:bg-amber-300"
+                className="hero-cta hero-cta-primary"
               >
                 Browse Menu
               </Link>
               <a
                 href="#about"
-                className="btn-hover rounded-full border border-white/15 bg-white/5 px-8 py-3 text-base font-semibold text-white hover:bg-white/10"
+                className="hero-cta hero-cta-secondary"
               >
                 Read More
               </a>
@@ -265,13 +342,13 @@ function LandingPage() {
           >
             <Link
               href={`/menu`}
-              className="btn-hover rounded-full bg-amber-400 px-8 py-3 text-base font-extrabold text-black hover:bg-amber-300"
+              className="hero-cta hero-cta-primary"
             >
               Browse Menu
             </Link>
             <a
               href="#about"
-              className="btn-hover rounded-full border border-white/15 bg-white/5 px-8 py-3 text-base font-semibold text-white hover:bg-white/10"
+              className="hero-cta hero-cta-secondary"
             >
               Read More
             </a>
