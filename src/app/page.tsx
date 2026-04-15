@@ -269,55 +269,51 @@ function LandingPage() {
           <div className="absolute -right-24 bottom-2 h-64 w-64 rounded-full bg-amber-300/10 blur-3xl" />
         </div>
         <div className="relative mx-auto max-w-7xl px-4">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-0 md:grid-cols-2 lg:grid-cols-4">
 
-          {/* Card 1: Master Chefs */}
-          <div className="group rounded-3xl border border-white/5 bg-[#16130d]/80 p-8 backdrop-blur-md transition-all hover:-translate-y-2 hover:border-amber-400/20 hover:bg-[#1f1b13]">
-            {/* Applied 'antigravity' to the container */}
-            <div className="antigravity flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-400 text-black shadow-lg shadow-amber-400/20 transition-transform duration-300 group-hover:scale-110">
-              <ChefHat strokeWidth={2.5} size={28} />
+            {/* Card 1: Master Chefs */}
+            <div className="px-8 py-10">
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-amber-200/40 text-amber-200/85">
+                <ChefHat strokeWidth={2.1} size={20} />
+              </div>
+              <h3 className="mt-6 text-[1.8rem] font-medium tracking-tight text-[#f3e8d7]">Master Chefs</h3>
+              <p className="mt-3 max-w-[16rem] text-[1.04rem] leading-8 text-[#d8ccbb]">
+                Crafted by experienced chefs, consistent quality.
+              </p>
             </div>
-            <h3 className="mt-6 text-xl font-bold tracking-tight text-white">Master Chefs</h3>
-            <p className="mt-3 text-sm font-medium leading-relaxed tracking-wide text-white/70">
-              Crafted by experienced chefs, consistent quality.
-            </p>
-          </div>
 
-          {/* Card 2: Quality Food */}
-          <div className="group rounded-3xl border border-white/5 bg-[#16130d]/80 p-8 backdrop-blur-md transition-all hover:-translate-y-2 hover:border-amber-400/20 hover:bg-[#1f1b13]">
-            {/* Applied the SAME 'antigravity' class for sync */}
-            <div className="antigravity flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-400 text-black shadow-lg shadow-amber-400/20 transition-transform duration-300 group-hover:scale-110">
-              <Utensils strokeWidth={2.5} size={28} />
+            {/* Card 2: Quality Food */}
+            <div className="border-t border-white/12 px-8 py-10 md:border-l md:border-t-0 lg:border-white/15">
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-amber-200/40 text-amber-200/85">
+                <Utensils strokeWidth={2.1} size={20} />
+              </div>
+              <h3 className="mt-6 text-[1.8rem] font-medium tracking-tight text-[#f3e8d7]">Quality Food</h3>
+              <p className="mt-3 max-w-[16rem] text-[1.04rem] leading-8 text-[#d8ccbb]">
+                Fresh ingredients with great taste in every bite.
+              </p>
             </div>
-            <h3 className="mt-6 text-xl font-bold tracking-tight text-white">Quality Food</h3>
-            <p className="mt-3 text-sm font-medium leading-relaxed tracking-wide text-white/70">
-              Fresh ingredients with great taste in every bite.
-            </p>
-          </div>
 
-          {/* Card 3: Online Order */}
-          <div className="group rounded-3xl border border-white/5 bg-[#16130d]/80 p-8 backdrop-blur-md transition-all hover:-translate-y-2 hover:border-amber-400/20 hover:bg-[#1f1b13]">
-            {/* Applied the SAME 'antigravity' class for sync */}
-            <div className="antigravity flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-400 text-black shadow-lg shadow-amber-400/20 transition-transform duration-300 group-hover:scale-110">
-              <ShoppingCart strokeWidth={2.5} size={28} />
+            {/* Card 3: Online Order */}
+            <div className="border-t border-white/12 px-8 py-10 lg:border-l lg:border-t-0 lg:border-white/15">
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-amber-200/40 text-amber-200/85">
+                <ShoppingCart strokeWidth={2.1} size={20} />
+              </div>
+              <h3 className="mt-6 text-[1.8rem] font-medium tracking-tight text-[#f3e8d7]">Online Order</h3>
+              <p className="mt-3 max-w-[16rem] text-[1.04rem] leading-8 text-[#d8ccbb]">
+                Order from the table and track your order easily.
+              </p>
             </div>
-            <h3 className="mt-6 text-xl font-bold tracking-tight text-white">Online Order</h3>
-            <p className="mt-3 text-sm font-medium leading-relaxed tracking-wide text-white/70">
-              Order from the table and track your order easily.
-            </p>
-          </div>
 
-          {/* Card 4: 24/7 Service */}
-          <div className="group rounded-3xl border border-white/5 bg-[#16130d]/80 p-8 backdrop-blur-md transition-all hover:-translate-y-2 hover:border-amber-400/20 hover:bg-[#1f1b13]">
-            {/* Applied the SAME 'antigravity' class for sync */}
-            <div className="antigravity flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-400 text-black shadow-lg shadow-amber-400/20 transition-transform duration-300 group-hover:scale-110">
-              <Headset strokeWidth={2.5} size={28} />
+            {/* Card 4: 24/7 Service */}
+            <div className="border-t border-white/12 px-8 py-10 md:border-l lg:border-t-0 lg:border-white/15">
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-amber-200/40 text-amber-200/85">
+                <Headset strokeWidth={2.1} size={20} />
+              </div>
+              <h3 className="mt-6 text-[1.8rem] font-medium tracking-tight text-[#f3e8d7]">24/7 Service</h3>
+              <p className="mt-3 max-w-[16rem] text-[1.04rem] leading-8 text-[#d8ccbb]">
+                Support for your dining flow whenever needed.
+              </p>
             </div>
-            <h3 className="mt-6 text-xl font-bold tracking-tight text-white">24/7 Service</h3>
-            <p className="mt-3 text-sm font-medium leading-relaxed tracking-wide text-white/70">
-              Support for your dining flow whenever needed.
-            </p>
-          </div>
 
           </div>
         </div>
