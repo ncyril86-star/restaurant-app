@@ -71,7 +71,7 @@ export default function Navbar({ cart: initialCart }: NavbarProps) {
     <>
       <header 
         className={`sticky top-0 z-50 border-b border-white/10 transition-all duration-300 ${
-          isScrolled ? 'bg-[#0b0f19]/90 backdrop-blur-md py-2' : 'bg-[#0b0f19]/80 backdrop-blur-sm py-3'
+          isScrolled ? 'bg-[#18181F] py-2' : 'bg-[#18181F] py-3'
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
@@ -87,7 +87,7 @@ export default function Navbar({ cart: initialCart }: NavbarProps) {
             </div>
             <div className="leading-tight">
               <p
-                className="text-[1.75rem] font-semibold leading-none tracking-[0.01em]"
+                className="text-[clamp(1.2rem,1.55vw,1.75rem)] font-semibold leading-none tracking-[0.01em]"
                 style={{ fontFamily: "'Cormorant Garamond', 'Baskerville', 'Times New Roman', serif" }}
               >
                 <span className="text-[#efe3d2] transition-colors group-hover:text-[#fff1de]">Makan</span>
@@ -97,13 +97,13 @@ export default function Navbar({ cart: initialCart }: NavbarProps) {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-8 text-sm font-medium text-white/70 md:flex">
+          <nav className="hidden items-center gap-8 text-[clamp(1.2rem,1.55vw,1.75rem)] font-semibold leading-none text-white/75 md:flex">
             {navLinks.map((link) => (
               <div key={link.name} className="relative group py-2">
                 {link.hasDropdown ? (
                   <div className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors">
                     <Link href={link.href}>{link.name}</Link>
-                    <ChevronDown size={14} className="transition-transform duration-300 group-hover:rotate-180" />
+                    <ChevronDown size={20} className="transition-transform duration-300 group-hover:rotate-180" />
                     
                     {/* Dropdown Content */}
                     <div className="absolute left-0 top-full mt-1 w-48 rounded-xl border border-white/10 bg-[#0b0f19]/95 backdrop-blur-md shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top scale-95 group-hover:scale-100">
@@ -127,7 +127,7 @@ export default function Navbar({ cart: initialCart }: NavbarProps) {
           <div className="flex items-center gap-4">
             <Link
               href="/view-order"
-              className="hidden sm:flex rounded-full bg-amber-400 px-5 py-2 text-xs font-black text-black shadow-[0_8px_20px_rgba(245,158,11,0.3)] hover:bg-amber-300 hover:scale-105 active:scale-95 transition-all items-center gap-2"
+              className="hidden sm:flex rounded-full bg-amber-400 px-6 py-3 text-[clamp(1.2rem,1.55vw,1.75rem)] font-black leading-none text-black shadow-[0_8px_20px_rgba(245,158,11,0.3)] hover:bg-amber-300 hover:scale-105 active:scale-95 transition-all items-center gap-2"
             >
               VIEW ORDER
               {cartCount > 0 && (
