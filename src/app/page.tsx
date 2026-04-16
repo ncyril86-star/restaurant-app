@@ -391,8 +391,8 @@ function LandingPage() {
               <div className="feature-slice-icon inline-flex h-11 w-11 items-center justify-center rounded-full border border-amber-200/40 text-amber-200/85">
                 <ChefHat strokeWidth={2.1} size={20} />
               </div>
-              <h3 className="feature-slice-title mt-6 text-[1.95rem] font-medium leading-[1.08] tracking-[0.01em] text-[#f3e8d7]">Master Chefs</h3>
-              <p className="feature-slice-copy mt-4 max-w-[16rem] text-[1.08rem] leading-8 text-[#d8ccbb]">
+              <h3 className="feature-slice-title mt-6 text-[1.95rem] font-medium leading-[1.08] tracking-[0.01em] text-white">Master Chefs</h3>
+              <p className="feature-slice-copy mt-4 max-w-[16rem] text-[1.08rem] leading-8 text-white/80">
                 Crafted by experienced chefs, consistent quality.
               </p>
             </div>
@@ -402,8 +402,8 @@ function LandingPage() {
               <div className="feature-slice-icon inline-flex h-11 w-11 items-center justify-center rounded-full border border-amber-200/40 text-amber-200/85">
                 <Utensils strokeWidth={2.1} size={20} />
               </div>
-              <h3 className="feature-slice-title mt-6 text-[1.95rem] font-medium leading-[1.08] tracking-[0.01em] text-[#f3e8d7]">Quality Food</h3>
-              <p className="feature-slice-copy mt-4 max-w-[16rem] text-[1.08rem] leading-8 text-[#d8ccbb]">
+              <h3 className="feature-slice-title mt-6 text-[1.95rem] font-medium leading-[1.08] tracking-[0.01em] text-white">Quality Food</h3>
+              <p className="feature-slice-copy mt-4 max-w-[16rem] text-[1.08rem] leading-8 text-white/80">
                 Fresh ingredients with great taste in every bite.
               </p>
             </div>
@@ -413,8 +413,8 @@ function LandingPage() {
               <div className="feature-slice-icon inline-flex h-11 w-11 items-center justify-center rounded-full border border-amber-200/40 text-amber-200/85">
                 <ShoppingCart strokeWidth={2.1} size={20} />
               </div>
-              <h3 className="feature-slice-title mt-6 text-[1.95rem] font-medium leading-[1.08] tracking-[0.01em] text-[#f3e8d7]">Online Order</h3>
-              <p className="feature-slice-copy mt-4 max-w-[16rem] text-[1.08rem] leading-8 text-[#d8ccbb]">
+              <h3 className="feature-slice-title mt-6 text-[1.95rem] font-medium leading-[1.08] tracking-[0.01em] text-white">Online Order</h3>
+              <p className="feature-slice-copy mt-4 max-w-[16rem] text-[1.08rem] leading-8 text-white/80">
                 Order from the table and track your order easily.
               </p>
             </div>
@@ -424,8 +424,8 @@ function LandingPage() {
               <div className="feature-slice-icon inline-flex h-11 w-11 items-center justify-center rounded-full border border-amber-200/40 text-amber-200/85">
                 <Headset strokeWidth={2.1} size={20} />
               </div>
-              <h3 className="feature-slice-title mt-6 text-[1.95rem] font-medium leading-[1.08] tracking-[0.01em] text-[#f3e8d7]">24/7 Service</h3>
-              <p className="feature-slice-copy mt-4 max-w-[16rem] text-[1.08rem] leading-8 text-[#d8ccbb]">
+              <h3 className="feature-slice-title mt-6 text-[1.95rem] font-medium leading-[1.08] tracking-[0.01em] text-white">24/7 Service</h3>
+              <p className="feature-slice-copy mt-4 max-w-[16rem] text-[1.08rem] leading-8 text-white/80">
                 Support for your dining flow whenever needed.
               </p>
             </div>
