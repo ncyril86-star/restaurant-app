@@ -357,7 +357,7 @@ function ViewOrderPage() {
                 <div className="mt-8">
                   <Link
                     href={`/checkout`}
-                    className="w-full inline-block text-center rounded-full bg-[#d4af37] px-4 py-3.5 text-base font-extrabold text-black shadow-[0_10px_30px_rgba(212,175,55,0.25)] hover:bg-[#c5a02e] focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:ring-offset-2 focus:ring-offset-[#0b0f19] transition-all tracking-[0.2em]"
+                    className="w-full inline-block text-center rounded-full border border-[#d4af37]/80 bg-transparent px-4 py-3.5 text-base font-extrabold text-[#d4af37] shadow-[0_10px_30px_rgba(212,175,55,0.15)] hover:bg-[#d4af37]/10 focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:ring-offset-2 focus:ring-offset-[#0b0f19] transition-all tracking-[0.2em]"
                     style={{ fontFamily: "'Cormorant Garamond', 'Baskerville', 'Times New Roman', serif" }}
                   >
                     CHECKOUT

@@ -179,12 +179,12 @@ function MenuPage() {
           <h1 className="text-4xl font-extrabold text-white">Menu</h1>
           <Link
             href="/view-order"
-            className="inline-flex items-center gap-1.5 rounded-full bg-[#d4af37] px-3 py-1.5 text-[11px] font-black text-black shadow-[0_8px_20px_rgba(212,175,55,0.3)] transition-all hover:bg-[#c5a02e] hover:scale-105 active:scale-95 md:hidden tracking-[0.15em]"
+            className="inline-flex items-center gap-1.5 rounded-full border border-[#d4af37]/80 bg-transparent px-3 py-1.5 text-[11px] font-black text-[#d4af37] shadow-[0_8px_20px_rgba(212,175,55,0.2)] transition-all hover:bg-[#d4af37]/10 hover:scale-105 active:scale-95 md:hidden tracking-[0.15em]"
             style={{ fontFamily: "'Cormorant Garamond', 'Baskerville', 'Times New Roman', serif" }}
           >
             VIEW ORDER
             {cartCount > 0 && (
-              <span className="inline-flex h-4 min-w-[16px] items-center justify-center rounded-full border border-black/5 bg-black/10 px-1 text-[9px] font-bold">
+              <span className="inline-flex h-4 min-w-[16px] items-center justify-center rounded-full border border-[#d4af37]/40 bg-[#d4af37]/15 px-1 text-[9px] font-bold">
                 {cartCount}
               </span>
             )}
