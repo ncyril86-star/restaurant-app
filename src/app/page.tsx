@@ -496,7 +496,17 @@ function LandingPage() {
         data-section="about"
       >
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 lg:grid-cols-2 lg:items-center">
-          <div className="relative group">
+          <div className="relative group pt-8 pl-8">
+            {/* Anniversary Badge Overlay (Hanging Off) */}
+            <div 
+              className="absolute left-0 top-0 z-20 flex h-40 w-40 flex-col items-center justify-center bg-[#2c0808] p-4 text-center shadow-[20px_20px_60px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:-translate-y-1 group-hover:-translate-x-1"
+              style={{ border: '1px solid rgba(212, 175, 55, 0.2)' }}
+            >
+              <p className="text-5xl font-serif font-bold text-[#d4af37]">10</p>
+              <p className="mt-3 text-[0.8rem] font-bold tracking-[0.3em] text-[#d4af37] uppercase leading-tight">Years</p>
+              <p className="mt-1 text-[0.65rem] font-bold tracking-[0.15em] text-[#d4af37]/80 uppercase leading-tight">Serving Miri</p>
+            </div>
+
             {/* Main Chef Image */}
             <div
               className={`overflow-hidden rounded-2xl border border-white/10 bg-white/5 animate-scale glow-animation ${visibleSections.about ? 'visible' : ''}`}
@@ -506,24 +516,14 @@ function LandingPage() {
                 <img
                   src="/chef.png"
                   alt="Our Master Chef"
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-transparent to-transparent opacity-40" />
-                
-                {/* Anniversary Badge Overlay */}
-                <div 
-                  className="absolute left-6 top-6 z-20 flex h-32 w-32 flex-col items-center justify-center bg-[#2c0808] p-4 text-center shadow-2xl drop-shadow-xl"
-                  style={{ border: '1px solid rgba(212, 175, 55, 0.3)' }}
-                >
-                  <p className="text-4xl font-serif font-bold text-[#d4af37]">10</p>
-                  <p className="mt-1 text-[0.7rem] font-bold tracking-[0.2em] text-[#d4af37] uppercase leading-tight">Years</p>
-                  <p className="text-[0.6rem] font-bold tracking-[0.1em] text-[#d4af37]/80 uppercase leading-tight">Serving Miri</p>
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-transparent to-transparent opacity-40 transition-opacity duration-500 group-hover:opacity-20" />
               </div>
             </div>
             
             {/* Subtle decorative elements matching hero style */}
-            <div className="absolute -bottom-6 -right-6 -z-10 h-64 w-64 rounded-full bg-amber-500/10 blur-3xl" />
+            <div className="absolute -bottom-10 -right-10 -z-10 h-72 w-72 rounded-full bg-amber-500/10 blur-3xl opacity-60" />
           </div>
 
           <div
