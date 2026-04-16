@@ -358,7 +358,7 @@ function LandingPage() {
 
             {/* Mobile Hero Stats - Now only on mobile column */}
             <div 
-              className={`grid lg:hidden grid-cols-3 gap-2 mt-6 animate-fade-in ${visibleSections.hero ? 'visible' : ''}`}
+              className={`grid lg:hidden grid-cols-3 gap-3 mt-8 animate-fade-in ${visibleSections.hero ? 'visible' : ''}`}
               style={{ animationDelay: '0.7s' }}
             >
               {[
@@ -366,15 +366,15 @@ function LandingPage() {
                 { label: 'MASTER CHEFS', value: '15' },
                 { label: 'GOOGLE RATING', value: '4.8', icon: true },
               ].map((stat, i) => (
-                <div key={i} className="border border-white/10 bg-white/5 p-2 backdrop-blur-sm">
+                <div key={i} className="border border-white/10 bg-white/5 p-3 backdrop-blur-sm">
                   <div className="flex flex-col items-center text-center">
-                    <div className="flex items-center gap-0.5">
-                      <span className="font-serif text-lg font-bold text-[#d4af37]">
+                    <div className="flex items-center gap-1">
+                      <span className="font-serif text-xl font-bold text-[#d4af37]">
                         {stat.value}
                       </span>
-                      {stat.icon && <Star size={10} fill="#d4af37" className="text-[#d4af37]" />}
+                      {stat.icon && <Star size={12} fill="#d4af37" className="text-[#d4af37]" />}
                     </div>
-                    <span className="font-sans mt-0.5 text-[0.42rem] font-bold tracking-[0.05em] text-white/40 uppercase leading-none">
+                    <span className="font-sans mt-1 text-[0.48rem] font-bold tracking-[0.05em] text-white/40 uppercase leading-none">
                       {stat.label}
                     </span>
                   </div>
@@ -385,27 +385,25 @@ function LandingPage() {
 
           {/* Right Column: Desktop Stats */}
           <div 
-            className={`hidden lg:flex items-end justify-end animate-slide-right h-full pb-0.5 ${visibleSections.hero ? 'visible' : ''}`}
+            className={`hidden lg:flex items-end justify-end animate-slide-right h-full pb-1 ${visibleSections.hero ? 'visible' : ''}`}
             style={{ animationDelay: '0.4s' }}
           >
-            <div className="grid grid-cols-3 gap-3 max-w-[300px] w-full">
+            <div className="grid grid-cols-3 gap-4 max-w-[380px] w-full">
               {[
                 { label: 'YEARS OF FLAVOUR', value: '10' },
                 { label: 'MASTER CHEFS', value: '15' },
                 { label: 'GOOGLE RATING', value: '4.8', icon: true },
               ].map((stat, i) => (
-                <div key={i} className="aspect-square relative group overflow-hidden border border-white/10 bg-black/40 p-2.5 backdrop-blur-xl transition-all hover:bg-black/60 hover:border-[#d4af37]/30 flex flex-col items-center justify-center">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="flex items-center gap-1">
-                      <span className="font-serif text-2xl font-bold text-[#d4af37]">
-                        {stat.value}
-                      </span>
-                      {stat.icon && <Star size={14} fill="#d4af37" className="text-[#d4af37] -mt-0.5" />}
-                    </div>
-                    <span className="font-sans mt-1.5 text-[0.42rem] font-bold tracking-[0.1em] text-white/50 leading-tight px-0.5 uppercase">
-                      {stat.label}
+                <div key={i} className="aspect-square relative group overflow-hidden border border-white/10 bg-black/40 p-3.5 backdrop-blur-xl transition-all hover:bg-black/60 hover:border-[#d4af37]/30 flex flex-col items-center justify-center text-center">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-serif text-3xl font-bold text-[#d4af37]">
+                      {stat.value}
                     </span>
+                    {stat.icon && <Star size={18} fill="#d4af37" className="text-[#d4af37] -mt-1" />}
                   </div>
+                  <span className="font-sans mt-2.5 text-[0.52rem] font-bold tracking-[0.12em] text-white/50 leading-tight px-0.5 uppercase">
+                    {stat.label}
+                  </span>
                 </div>
               ))}
             </div>
