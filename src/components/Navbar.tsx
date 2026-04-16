@@ -130,7 +130,7 @@ export default function Navbar({ cart: initialCart }: NavbarProps) {
           <div className="flex items-center gap-4">
             <Link
               href="/view-order"
-              className="hidden sm:flex rounded-full border border-[#d4af37]/80 bg-transparent px-6 py-3 text-[clamp(1rem,1.25vw,1.4rem)] font-semibold leading-none text-[#d4af37] shadow-[0_8px_20px_rgba(212,175,55,0.18)] hover:bg-[#d4af37]/10 hover:scale-105 active:scale-95 transition-all items-center gap-2"
+              className="hidden sm:flex rounded-full border border-[#d4af37]/80 bg-transparent px-5 py-2.5 text-[clamp(0.9rem,1vw,1.15rem)] font-semibold leading-none text-[#d4af37] shadow-[0_8px_20px_rgba(212,175,55,0.18)] hover:bg-[#d4af37]/10 hover:scale-105 active:scale-95 transition-all items-center gap-2"
               style={{ fontFamily: "'Cormorant Garamond', 'Baskerville', 'Times New Roman', serif" }}
             >
               VIEW ORDER
