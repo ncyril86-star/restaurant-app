@@ -509,7 +509,7 @@ function LandingPage() {
 
             {/* Main Chef Image */}
             <div
-              className={`overflow-hidden rounded-2xl border border-white/10 bg-white/5 animate-scale glow-animation ${visibleSections.about ? 'visible' : ''}`}
+              className={`overflow-hidden border border-white/10 bg-white/5 animate-scale glow-animation ${visibleSections.about ? 'visible' : ''}`}
               style={{ animationDelay: visibleSections.about ? '0.1s' : '0s' }}
             >
               <div className="relative aspect-[4/5] w-full overflow-hidden">
