@@ -543,20 +543,21 @@ function LandingPage() {
               </p>
             </div>
 
-            <div className="mt-10 grid grid-cols-2 gap-6">
-              <div
-                className={`rounded-2xl border border-white/10 bg-white/5 p-6 animate-rotate feature-card antigravity-fast ${visibleSections.about ? 'visible' : ''}`}
-                style={{ animationDelay: visibleSections.about ? '0.3s' : '0s' }}
-              >
-                <p className="text-4xl font-extrabold text-amber-300">10</p>
-                <p className="mt-2 text-base font-semibold">Years Experience</p>
-              </div>
-              <div
-                className={`rounded-2xl border border-white/10 bg-white/5 p-6 animate-rotate feature-card antigravity-slow ${visibleSections.about ? 'visible' : ''}`}
-                style={{ animationDelay: visibleSections.about ? '0.4s' : '0s' }}
-              >
-                <p className="text-4xl font-extrabold text-amber-300">15</p>
-                <p className="mt-2 text-base font-semibold">Master Chefs</p>
+            {/* Minimalist Stats Row (Inspired by second pic design) */}
+            <div className="mt-12 py-8 border-y border-white/10">
+              <div className="grid grid-cols-3 gap-4 text-center sm:text-left">
+                <div>
+                  <p className="text-4xl font-serif font-medium text-[#d4af37]">10+</p>
+                  <p className="mt-2 text-[0.65rem] font-bold tracking-[0.2em] text-white/60 uppercase">Years Experience</p>
+                </div>
+                <div>
+                  <p className="text-4xl font-serif font-medium text-[#d4af37]">15</p>
+                  <p className="mt-2 text-[0.65rem] font-bold tracking-[0.2em] text-white/60 uppercase">Master Chefs</p>
+                </div>
+                <div>
+                  <p className="text-4xl font-serif font-medium text-[#d4af37]">80+</p>
+                  <p className="mt-2 text-[0.65rem] font-bold tracking-[0.2em] text-white/60 uppercase">Dishes on Menu</p>
+                </div>
               </div>
             </div>
 
