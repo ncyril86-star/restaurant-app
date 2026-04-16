@@ -311,7 +311,7 @@ function LandingPage() {
             <h1 className="hero-premium-title mt-6 text-[3.2rem] sm:text-[4.4rem] lg:text-[5.8rem]">
               Enjoy hundreds of
               <br />
-              <span className="text-amber-300">flavors under</span>
+              <span className="text-[#d4af37]">flavors under</span>
               <br />
               one roof
             </h1>
