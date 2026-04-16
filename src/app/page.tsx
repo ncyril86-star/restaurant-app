@@ -580,123 +580,117 @@ function LandingPage() {
       </section>
 
       {/* Contact Section */}
+      {/* Get in Touch - Final Overhaul */}
       <section
         id="contact"
-        className="bg-[#0b0f19] border-t border-white/10"
-        data-section="footer"
+        className="bg-[#f8f3eb] py-24"
+        data-section="contact"
       >
-        <div className="mx-auto max-w-7xl px-4 py-20">
-          <div className="mb-16">
-            <p className="text-sm font-semibold text-amber-300 tracking-wide">GET IN TOUCH</p>
-            <h2 className="mt-3 text-5xl lg:text-6xl font-extrabold tracking-tight">
-              Contact Us
-            </h2>
-          </div>
+        <div className="mx-auto max-w-5xl px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+            
+            {/* Left Column: Info */}
+            <div className="space-y-12">
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <p className="text-[0.65rem] font-black tracking-[0.4em] text-[#d4af37] uppercase">Find Us</p>
+                  <div className="h-[1px] w-12 bg-[#d4af37]/30" />
+                </div>
+                <h2 className="text-6xl md:text-7xl font-serif text-[#2c0808] leading-[1.1]">
+                  Get in <br />
+                  <span className="italic">touch</span>
+                </h2>
+              </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* Left Side - Contact Info */}
-            <div
-              className={`animate-slide-left ${visibleSections.footer ? 'visible' : ''}`}
-              style={{ animationDelay: visibleSections.footer ? '0.1s' : '0s' }}
-            >
-              <p className="text-base leading-8 text-white/70 max-w-md">
-                MakanSedap offers an exceptional dining experience with chef-crafted dishes and quick ordering. Each meal is thoughtfully prepared using the finest ingredients and traditional techniques, creating a comfortable retreat to enjoy delicious food at the end of your day.
-              </p>
-
-              {/* Address */}
-              <div className="mt-10 flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-amber-400 text-black">
-                    <MapPin size={18} strokeWidth={2.5} />
+              <div className="space-y-10">
+                {/* Address */}
+                <div className="flex gap-6">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-14 w-14 bg-[#2c0808] text-[#d4af37] shadow-xl">
+                      <MapPin size={24} strokeWidth={2} />
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[0.65rem] font-black tracking-[0.3em] text-[#d4af37] uppercase mb-1">Address</p>
+                    <p className="text-[0.95rem] font-medium text-[#2c0808]/80 leading-relaxed">
+                      Lot 683, Block 9, Jalan Pujut-Lutong<br />
+                      C.D.T. 20, 98009 Miri, Sarawak, Malaysia
+                    </p>
                   </div>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-white/80 tracking-wide">ADDRESS</p>
-                  <p className="mt-2 text-base text-white/70">
-                    LOT 683, BLOCK 9, JALAN PUJUT-LUTONG,<br />
-                    C.D.T. 20, 98009 MIRI, SARAWAK.<br />
-                    MALAYSIA.
-                  </p>
+
+                {/* Phone */}
+                <div className="flex gap-6">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-14 w-14 bg-[#2c0808] text-[#d4af37] shadow-xl">
+                      <Phone size={24} strokeWidth={2} />
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[0.65rem] font-black tracking-[0.3em] text-[#d4af37] uppercase mb-1">Phone</p>
+                    <p className="text-[0.95rem] font-medium text-[#2c0808]/80 leading-relaxed">
+                      +60 12-345 6789
+                    </p>
+                  </div>
+                </div>
+
+                {/* Email */}
+                <div className="flex gap-6">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-14 w-14 bg-[#2c0808] text-[#d4af37] shadow-xl">
+                      <Mail size={24} strokeWidth={2} />
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[0.65rem] font-black tracking-[0.3em] text-[#d4af37] uppercase mb-1">Email</p>
+                    <p className="text-[0.95rem] font-medium text-[#2c0808]/80 leading-relaxed">
+                      hello@makansedap.com
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {/* Phone */}
-              <div className="mt-8 flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-amber-400 text-black">
-                    <Phone size={18} strokeWidth={2.5} />
+              {/* Opening Hours */}
+              <div className="pt-4">
+                <div className="inline-block bg-[#efe3d2] px-3 py-1 mb-6">
+                  <p className="text-[0.65rem] font-black tracking-[0.15em] text-[#d4af37] uppercase">Opening Hours</p>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between max-w-[280px]">
+                    <p className="text-[0.9rem] font-medium text-[#2c0808]/60">Mon &ndash; Fri</p>
+                    <p className="text-[0.9rem] font-bold text-[#2c0808]">9:00 AM &ndash; 11:00 PM</p>
                   </div>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-white/80 tracking-wide">PHONE</p>
-                  <p className="mt-2 text-base text-white/70">
-                    +60 12-345 6789
-                  </p>
-                </div>
-              </div>
-
-              {/* Email */}
-              <div className="mt-8 flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-amber-400 text-black">
-                    <Mail size={18} strokeWidth={2.5} />
+                  <div className="flex justify-between max-w-[280px]">
+                    <p className="text-[0.9rem] font-medium text-[#2c0808]/60">Sat &ndash; Sun</p>
+                    <p className="text-[0.9rem] font-bold text-[#2c0808]">10:00 AM &ndash; 12:00 AM</p>
                   </div>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-white/80 tracking-wide">EMAIL</p>
-                  <p className="mt-2 text-base text-white/70">
-                    hello@makansedap.com
-                  </p>
+                  <div className="flex justify-between max-w-[280px] pt-1 border-t border-[#2c0808]/5">
+                    <p className="text-[0.9rem] font-medium text-[#2c0808]/60">Delivery</p>
+                    <p className="text-[0.9rem] font-bold text-[#2c0808]">Available Daily</p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Right Side - Contact Form */}
-            <div
-              className={`animate-slide-right ${visibleSections.footer ? 'visible' : ''}`}
-              style={{ animationDelay: visibleSections.footer ? '0.2s' : '0s' }}
-            >
-              <form className="space-y-5">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Full Name"
-                    className="w-full px-6 py-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-amber-400 focus:bg-white/10 transition-all duration-300"
-                  />
-                </div>
-
-                <div>
-                  <input
-                    type="email"
-                    placeholder="Email Address"
-                    className="w-full px-6 py-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-amber-400 focus:bg-white/10 transition-all duration-300"
-                  />
-                </div>
-
-                <div>
-                  <input
-                    type="tel"
-                    placeholder="Phone Number"
-                    className="w-full px-6 py-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-amber-400 focus:bg-white/10 transition-all duration-300"
-                  />
-                </div>
-
-                <div>
-                  <textarea
-                    placeholder="Message"
-                    rows={6}
-                    className="w-full px-6 py-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-amber-400 focus:bg-white/10 transition-all duration-300 resize-none"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full btn-hover bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-extrabold py-4 rounded-lg text-base tracking-wider"
-                >
-                  SUBMIT
-                </button>
-              </form>
+            {/* Right Column: Map */}
+            <div className="h-full min-h-[500px] lg:mt-24 shadow-2xl relative">
+              <iframe
+                title="Miri Location Map"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15947.671040523!2d113.987!3d4.387!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMKwMjMnMTMuMiJOIDExM8KwNTknMTMuMiJF!5e0!3m2!1sen!2smy!4v1617260000000!5m2!1sen!2smy"
+                width="100%"
+                height="100%"
+                style={{ border: 0, filter: 'grayscale(0.2) contrast(1.1)' }}
+                allowFullScreen={true}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="absolute inset-0 grayscale-[0.3]"
+              />
+              <div className="absolute top-6 left-6 bg-white px-4 py-2 shadow-lg flex items-center gap-2">
+                <p className="text-[0.7rem] font-bold text-blue-600">Open in Maps</p>
+                <ExternalLink size={14} className="text-blue-600" />
+              </div>
             </div>
+
           </div>
         </div>
       </section>
