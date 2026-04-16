@@ -369,12 +369,12 @@ function LandingPage() {
                 <div key={i} className="border border-white/10 bg-white/5 p-3 backdrop-blur-sm">
                   <div className="flex flex-col items-center text-center">
                     <div className="flex items-center gap-1">
-                      <span className="text-xl font-bold text-[#d4af37]">
+                      <span className="font-serif text-2xl font-bold text-[#d4af37]">
                         {stat.value}
                       </span>
-                      {stat.icon && <Star size={12} fill="#d4af37" className="text-[#d4af37]" />}
+                      {stat.icon && <Star size={14} fill="#d4af37" className="text-[#d4af37]" />}
                     </div>
-                    <span className="mt-1 text-[0.55rem] font-black tracking-wider text-white/50">
+                    <span className="font-sans mt-1 text-[0.55rem] font-bold tracking-[0.1em] text-white/50 uppercase">
                       {stat.label}
                     </span>
                   </div>
@@ -396,12 +396,12 @@ function LandingPage() {
               <div key={i} className="aspect-square relative group overflow-hidden border border-white/10 bg-white/5 p-4 backdrop-blur-md transition-all hover:bg-white/10 hover:border-[#d4af37]/30 flex flex-col items-center justify-center">
                 <div className="flex flex-col items-center text-center">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-4xl font-bold text-[#d4af37]" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                    <span className="font-serif text-4xl font-bold text-[#d4af37]">
                       {stat.value}
                     </span>
-                    {stat.icon && <Star size={20} fill="#d4af37" className="text-[#d4af37]" />}
+                    {stat.icon && <Star size={22} fill="#d4af37" className="text-[#d4af37] -mt-1" />}
                   </div>
-                  <span className="mt-3 text-[0.6rem] font-black tracking-[0.18em] text-white/60 leading-tight px-2">
+                  <span className="font-sans mt-3 text-[0.62rem] font-bold tracking-[0.2em] text-white/60 leading-tight px-2 uppercase">
                     {stat.label}
                   </span>
                 </div>
