@@ -499,7 +499,7 @@ function LandingPage() {
           <div className="relative group pt-8 pl-8">
             {/* Anniversary Badge Overlay (Hanging Off) */}
             <div 
-              className="absolute left-0 top-6 z-20 flex h-28 w-28 flex-col items-center justify-center bg-[#2c0808] p-4 text-center shadow-[20px_20px_60px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:-translate-y-1 group-hover:-translate-x-1"
+              className="absolute left-0 top-14 z-20 flex h-28 w-28 flex-col items-center justify-center bg-[#2c0808] p-4 text-center shadow-[20px_20px_60px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:-translate-y-1 group-hover:-translate-x-1"
               style={{ border: '1px solid rgba(212, 175, 55, 0.2)' }}
             >
               <p className="text-3xl font-serif font-bold text-[#d4af37]">10</p>
