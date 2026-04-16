@@ -365,7 +365,7 @@ function LandingPage() {
       </section>
 
       {/* Scrolling Ticker */}
-      <section className="bg-[linear-gradient(90deg,rgba(8,13,26,0.97)_0%,rgba(16,24,42,0.96)_48%,rgba(7,12,24,0.97)_100%)] py-4 shadow-[inset_0_1px_0_rgba(214,170,96,0.34),inset_0_-1px_0_rgba(214,170,96,0.34)]">
+      <section className="bg-[#18181F] py-4 shadow-[inset_0_1px_0_rgba(214,170,96,0.34),inset_0_-1px_0_rgba(214,170,96,0.34)]">
         <div className="ticker-wrap overflow-hidden whitespace-nowrap">
           <div className="ticker-track flex items-center gap-10 px-8">
             {[...tickerItems, ...tickerItems].map((item, index) => (
