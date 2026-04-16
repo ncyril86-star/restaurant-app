@@ -496,25 +496,34 @@ function LandingPage() {
         data-section="about"
       >
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 lg:grid-cols-2 lg:items-center">
-          <div className="grid grid-cols-2 gap-5">
+          <div className="relative group">
+            {/* Main Chef Image */}
             <div
-              className={`overflow-hidden rounded-2xl border border-white/10 bg-white/5 animate-scale glow-animation antigravity ${visibleSections.about ? 'visible' : ''}`}
+              className={`overflow-hidden rounded-2xl border border-white/10 bg-white/5 animate-scale glow-animation ${visibleSections.about ? 'visible' : ''}`}
               style={{ animationDelay: visibleSections.about ? '0.1s' : '0s' }}
             >
-              <div className="aspect-[4/3] w-full bg-[url('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center transition-transform duration-500 hover:scale-110" />
+              <div className="relative aspect-[4/5] w-full overflow-hidden">
+                <img
+                  src="/chef.png"
+                  alt="Our Master Chef"
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-transparent to-transparent opacity-40" />
+                
+                {/* Anniversary Badge Overlay */}
+                <div 
+                  className="absolute left-6 top-6 z-20 flex h-32 w-32 flex-col items-center justify-center bg-[#2c0808] p-4 text-center shadow-2xl drop-shadow-xl"
+                  style={{ border: '1px solid rgba(212, 175, 55, 0.3)' }}
+                >
+                  <p className="text-4xl font-serif font-bold text-[#d4af37]">10</p>
+                  <p className="mt-1 text-[0.7rem] font-bold tracking-[0.2em] text-[#d4af37] uppercase leading-tight">Years</p>
+                  <p className="text-[0.6rem] font-bold tracking-[0.1em] text-[#d4af37]/80 uppercase leading-tight">Serving Miri</p>
+                </div>
+              </div>
             </div>
-            <div
-              className={`overflow-hidden rounded-2xl border border-white/10 bg-white/5 animate-scale glow-animation antigravity-slow ${visibleSections.about ? 'visible' : ''}`}
-              style={{ animationDelay: visibleSections.about ? '0.2s' : '0s' }}
-            >
-              <div className="aspect-[4/3] w-full bg-[url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center transition-transform duration-500 hover:scale-110" />
-            </div>
-            <div
-              className={`col-span-2 overflow-hidden rounded-2xl border border-white/10 bg-white/5 animate-scale glow-animation antigravity-fast ${visibleSections.about ? 'visible' : ''}`}
-              style={{ animationDelay: visibleSections.about ? '0.3s' : '0s' }}
-            >
-              <div className="aspect-[16/7] w-full bg-[url('https://images.unsplash.com/photo-1572715376701-98568319fd0b?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center transition-transform duration-500 hover:scale-110" />
-            </div>
+            
+            {/* Subtle decorative elements matching hero style */}
+            <div className="absolute -bottom-6 -right-6 -z-10 h-64 w-64 rounded-full bg-amber-500/10 blur-3xl" />
           </div>
 
           <div
