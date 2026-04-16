@@ -170,25 +170,18 @@ function MenuPage() {
   });
   const cartCount = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
 
+  const totalPrice = Object.entries(cart).reduce((sum, [id, qty]) => {
+    const item = items.find(it => it.id === id);
+    return sum + (Number(item?.price || 0) * qty);
+  }, 0);
+
   return (
-    <div className="min-h-screen bg-[#0b0f19] text-white overflow-x-hidden">
+    <div className="min-h-screen bg-[#0b0f19] text-white overflow-x-hidden pb-32">
       {/* Navbar is now global in layout.tsx */}
 
       <div className="mx-auto max-w-7xl p-6">
         <div className="mb-8 flex items-center justify-between gap-3">
           <h1 className="text-4xl font-extrabold text-white">Menu</h1>
-          <Link
-            href="/view-order"
-            className="inline-flex items-center gap-1.5 rounded-full border border-[#d4af37]/80 bg-transparent px-3 py-1.5 text-[11px] font-black text-[#d4af37] shadow-[0_8px_20px_rgba(212,175,55,0.2)] transition-all hover:bg-[#d4af37]/10 hover:scale-105 active:scale-95 md:hidden tracking-[0.15em]"
-            style={{ fontFamily: "'Cormorant Garamond', 'Baskerville', 'Times New Roman', serif" }}
-          >
-            VIEW ORDER
-            {cartCount > 0 && (
-              <span className="inline-flex h-4 min-w-[16px] items-center justify-center rounded-full border border-[#d4af37]/40 bg-[#d4af37]/15 px-1 text-[9px] font-bold">
-                {cartCount}
-              </span>
-            )}
-          </Link>
         </div>
         
         <div className="mb-6 flex flex-wrap items-center gap-3">
@@ -276,6 +269,35 @@ function MenuPage() {
           })}
         </div>
       </div>
+
+      {/* Sticky Bottom Bar for Mobile */}
+      {cartCount > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 z-[60] animate-slide-up md:hidden">
+          <div className="mx-auto max-w-md border-t border-[#d4af37]/30 bg-[#111827]/95 px-6 py-5 backdrop-blur-lg shadow-[0_-10px_40px_rgba(0,0,0,0.4)]">
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                <p className="text-[0.65rem] font-black tracking-[0.2em] text-[#d4af37] uppercase opacity-80 decoration-[#d4af37]/30">
+                  {cartCount} {cartCount === 1 ? 'Item' : 'Items'} Added
+                </p>
+                <p 
+                  className="mt-1 text-2xl font-bold text-white"
+                  style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                >
+                  RM {totalPrice.toFixed(2)}
+                </p>
+              </div>
+              <Link
+                href="/view-order"
+                className="rounded-full border border-[#d4af37]/80 bg-transparent px-8 py-3.5 text-sm font-black text-[#d4af37] shadow-xl hover:bg-[#d4af37]/10 transition-all tracking-[0.15em] active:scale-95"
+                style={{ fontFamily: "'Cormorant Garamond', serif" }}
+              >
+                VIEW ORDER
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {toast.show && (
         <div className="fixed top-24 left-1/2 z-50 -translate-x-1/2 transform animate-slide-up">
           <div className="rounded-full bg-[rgba(22,163,74,0.9)] px-5 py-3 text-sm font-semibold text-white shadow-[0_8px_30px_rgba(22,163,74,0.3)] backdrop-blur-md border border-[#22C55E]">
