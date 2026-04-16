@@ -382,10 +382,10 @@ function LandingPage() {
       </section>
 
       {/* Feature strip - Full Width */}
-      <section className="relative overflow-hidden bg-[#08152A] py-16">
+      <section className="relative overflow-hidden bg-[#18181F] py-16">
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-x-0 top-0 h-px bg-white/12" />
-          <div className="absolute inset-x-0 bottom-0 h-px bg-white/8" />
+          <div className="absolute inset-x-0 top-0 h-px bg-[#d4af37]/45" />
+          <div className="absolute inset-x-0 bottom-0 h-px bg-[#d4af37]/30" />
           <div className="absolute -left-20 top-12 h-56 w-56 rounded-full bg-slate-200/10 blur-3xl" />
           <div className="absolute -right-24 bottom-2 h-64 w-64 rounded-full bg-amber-300/10 blur-3xl" />
         </div>
@@ -404,7 +404,7 @@ function LandingPage() {
             </div>
 
             {/* Card 2: Quality Food */}
-            <div className="feature-slice group cursor-pointer border-t border-white/12 px-8 py-10 md:border-l md:border-t-0 lg:border-white/15">
+            <div className="feature-slice group cursor-pointer border-t border-[#d4af37]/20 px-8 py-10 md:border-l md:border-t-0 lg:border-[#d4af37]/25">
               <div className="feature-slice-icon inline-flex h-11 w-11 items-center justify-center rounded-full border border-amber-200/40 text-amber-200/85">
                 <Utensils strokeWidth={2.1} size={20} />
               </div>
@@ -415,7 +415,7 @@ function LandingPage() {
             </div>
 
             {/* Card 3: Online Order */}
-            <div className="feature-slice group cursor-pointer border-t border-white/12 px-8 py-10 lg:border-l lg:border-t-0 lg:border-white/15">
+            <div className="feature-slice group cursor-pointer border-t border-[#d4af37]/20 px-8 py-10 lg:border-l lg:border-t-0 lg:border-[#d4af37]/25">
               <div className="feature-slice-icon inline-flex h-11 w-11 items-center justify-center rounded-full border border-amber-200/40 text-amber-200/85">
                 <ShoppingCart strokeWidth={2.1} size={20} />
               </div>
@@ -426,7 +426,7 @@ function LandingPage() {
             </div>
 
             {/* Card 4: 24/7 Service */}
-            <div className="feature-slice group cursor-pointer border-t border-white/12 px-8 py-10 md:border-l lg:border-t-0 lg:border-white/15">
+            <div className="feature-slice group cursor-pointer border-t border-[#d4af37]/20 px-8 py-10 md:border-l lg:border-t-0 lg:border-[#d4af37]/25">
               <div className="feature-slice-icon inline-flex h-11 w-11 items-center justify-center rounded-full border border-amber-200/40 text-amber-200/85">
                 <Headset strokeWidth={2.1} size={20} />
               </div>
