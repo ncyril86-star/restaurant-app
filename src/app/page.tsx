@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, useRef, Suspense } from 'react';
 import { ChefHat, Utensils, ShoppingCart, Headset, Crown, Star } from 'lucide-react';
-import { MapPin, Phone, Mail } from 'lucide-react';
+import { MapPin, Phone, Mail, ExternalLink } from 'lucide-react';
 
 function LandingPage() {
   const [cart, setCart] = useState<{ [key: string]: number }>({});
