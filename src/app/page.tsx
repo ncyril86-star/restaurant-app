@@ -521,11 +521,11 @@ function LandingPage() {
             className={`animate-slide-left ${visibleSections.about ? 'visible' : ''}`}
             style={{ animationDelay: visibleSections.about ? '0.2s' : '0s' }}
           >
-            <p className="text-base font-semibold text-amber-300">About Us</p>
-            <h2 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
-              Welcome to <span className="text-amber-300">MakanSedap</span>
+            <p className="text-base font-semibold text-[#d4af37] tracking-[0.2em] uppercase">Our Story</p>
+            <h2 className="hero-premium-title mt-6 text-4xl sm:text-5xl lg:text-7xl leading-[1.1]">
+              Welcome to <span className="text-[#d4af37]">MakanSedap</span>
             </h2>
-            <p className="mt-6 text-base leading-8 text-white/70">
+            <p className="hero-premium-copy mt-8 text-lg leading-relaxed">
               We take pride in our culinary diversity, bringing Western and traditional cuisines together on a single menu. Whether you're craving the bold,
               rustic spices of a local heritage dish or the refined, savory pull of a Western classic, our kitchen strikes the perfect balance between the familiar and the global.
             </p>
