@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, useRef, Suspense } from 'react';
-import { ChefHat, Utensils, ShoppingCart, Headset, Crown } from 'lucide-react';
+import { ChefHat, Utensils, ShoppingCart, Headset, Crown, Star } from 'lucide-react';
 import { MapPin, Phone, Mail } from 'lucide-react';
 
 function LandingPage() {
@@ -335,6 +335,32 @@ function LandingPage() {
                 Read More
               </a>
             </div>
+
+            {/* Desktop Hero Stats */}
+            <div 
+              className={`mt-12 hidden lg:grid grid-cols-3 gap-6 max-w-2xl animate-fade-in ${visibleSections.hero ? 'visible' : ''}`}
+              style={{ animationDelay: '0.6s' }}
+            >
+              {[
+                { label: 'YEARS OF FLAVOUR', value: '10' },
+                { label: 'MASTER CHEFS', value: '15' },
+                { label: 'GOOGLE RATING', value: '4.8', icon: true },
+              ].map((stat, i) => (
+                <div key={i} className="relative group overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md transition-all hover:bg-white/10 hover:border-[#d4af37]/30">
+                  <div className="flex flex-col items-center text-center">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-3xl font-bold text-[#d4af37]" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                        {stat.value}
+                      </span>
+                      {stat.icon && <Star size={18} fill="#d4af37" className="text-[#d4af37]" />}
+                    </div>
+                    <span className="mt-2 text-[0.65rem] font-black tracking-[0.15em] text-white/60">
+                      {stat.label}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Mobile Buttons */}
@@ -354,6 +380,32 @@ function LandingPage() {
             >
               Read More
             </a>
+          </div>
+
+          {/* Mobile Hero Stats */}
+          <div 
+            className={`grid lg:hidden grid-cols-3 gap-3 mt-8 animate-fade-in ${visibleSections.hero ? 'visible' : ''}`}
+            style={{ animationDelay: '0.7s' }}
+          >
+            {[
+              { label: 'YEARS FLAVOUR', value: '10' },
+              { label: 'MASTER CHEFS', value: '15' },
+              { label: 'GOOGLE RATING', value: '4.8', icon: true },
+            ].map((stat, i) => (
+              <div key={i} className="rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm">
+                <div className="flex flex-col items-center text-center">
+                  <div className="flex items-center gap-1">
+                    <span className="text-xl font-bold text-[#d4af37]">
+                      {stat.value}
+                    </span>
+                    {stat.icon && <Star size={12} fill="#d4af37" className="text-[#d4af37]" />}
+                  </div>
+                  <span className="mt-1 text-[0.55rem] font-black tracking-wider text-white/50">
+                    {stat.label}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
