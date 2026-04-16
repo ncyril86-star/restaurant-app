@@ -358,7 +358,7 @@ function LandingPage() {
 
             {/* Mobile Hero Stats - Now only on mobile column */}
             <div 
-              className={`grid lg:hidden grid-cols-3 gap-3 mt-8 animate-fade-in ${visibleSections.hero ? 'visible' : ''}`}
+              className={`grid lg:hidden grid-cols-3 gap-4 mt-10 animate-fade-in ${visibleSections.hero ? 'visible' : ''}`}
               style={{ animationDelay: '0.7s' }}
             >
               {[
@@ -366,15 +366,15 @@ function LandingPage() {
                 { label: 'MASTER CHEFS', value: '15' },
                 { label: 'GOOGLE RATING', value: '4.8', icon: true },
               ].map((stat, i) => (
-                <div key={i} className="border border-white/10 bg-white/10 p-3 backdrop-blur-sm shadow-lg">
+                <div key={i} className="border border-white/10 bg-white/10 p-4 backdrop-blur-md shadow-lg">
                   <div className="flex flex-col items-center text-center">
-                    <div className="flex items-center gap-1">
-                      <span className="font-serif text-xl font-bold text-[#d4af37]">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-serif text-2xl font-bold text-[#d4af37]">
                         {stat.value}
                       </span>
-                      {stat.icon && <Star size={12} fill="#d4af37" className="text-[#d4af37]" />}
+                      {stat.icon && <Star size={14} fill="#d4af37" className="text-[#d4af37]" />}
                     </div>
-                    <span className="font-sans mt-1 text-[0.48rem] font-bold tracking-[0.05em] text-white/50 uppercase leading-none">
+                    <span className="font-sans mt-1.5 text-[0.55rem] font-bold tracking-[0.05em] text-white/50 uppercase leading-none">
                       {stat.label}
                     </span>
                   </div>
@@ -385,24 +385,24 @@ function LandingPage() {
 
           {/* Right Column: Desktop Stats */}
           <div 
-            className={`hidden lg:flex items-end justify-end animate-slide-right h-full pb-1 ${visibleSections.hero ? 'visible' : ''}`}
+            className={`hidden lg:flex items-end justify-end animate-slide-right h-full pb-2 ${visibleSections.hero ? 'visible' : ''}`}
             style={{ animationDelay: '0.4s' }}
           >
-            <div className="grid grid-cols-3 gap-4 max-w-[380px] w-full">
+            <div className="grid grid-cols-3 gap-6 max-w-[540px] w-full">
               {[
                 { label: 'YEARS OF FLAVOUR', value: '10' },
                 { label: 'MASTER CHEFS', value: '15' },
                 { label: 'GOOGLE RATING', value: '4.8', icon: true },
               ].map((stat, i) => (
-                <div key={i} className="aspect-square relative group overflow-hidden border border-white/10 bg-white/10 p-3.5 backdrop-blur-xl transition-all hover:bg-white/20 hover:border-[#d4af37]/40 flex flex-col items-center justify-center text-center shadow-2xl">
+                <div key={i} className="aspect-square relative group overflow-hidden border border-white/10 bg-white/10 p-6 backdrop-blur-xl transition-all hover:bg-white/20 hover:border-[#d4af37]/40 flex flex-col items-center justify-center text-center shadow-2xl">
                   <div className="flex flex-col items-center text-center">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-serif text-3xl font-bold text-[#d4af37]">
+                    <div className="flex items-center gap-2">
+                      <span className="font-serif text-5xl font-bold text-[#d4af37]">
                         {stat.value}
                       </span>
-                      {stat.icon && <Star size={18} fill="#d4af37" className="text-[#d4af37] -mt-1" />}
+                      {stat.icon && <Star size={28} fill="#d4af37" className="text-[#d4af37] -mt-1" />}
                     </div>
-                    <span className="font-sans mt-2.5 text-[0.52rem] font-bold tracking-[0.12em] text-white/70 leading-tight px-0.5 uppercase">
+                    <span className="font-sans mt-4 text-[0.68rem] font-bold tracking-[0.15em] text-white/70 leading-tight px-1 uppercase">
                       {stat.label}
                     </span>
                   </div>
