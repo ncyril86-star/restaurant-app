@@ -561,19 +561,19 @@ function LandingPage() {
               </div>
             </div>
 
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <a
-                href="#contact"
-                className="btn-hover rounded-full bg-amber-400 px-8 py-3 text-base font-extrabold text-black hover:bg-amber-300"
-              >
-                Contact Us
-              </a>
+            <div className="mt-12 flex flex-wrap items-center gap-6">
               <Link
-                href={`/menu`}
-                className="btn-hover rounded-full border border-white/15 bg-white/5 px-8 py-3 text-base font-semibold text-white hover:bg-white/10"
+                href="/menu"
+                className="btn-hover bg-[#d4af37] px-10 py-4 text-[0.85rem] font-bold tracking-[0.2em] text-black uppercase"
               >
-                Order Now
+                Browse Menu
               </Link>
+              <button
+                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                className="btn-hover border border-white/20 bg-white/5 px-10 py-4 text-[0.85rem] font-bold tracking-[0.2em] text-white uppercase hover:bg-white/10"
+              >
+                Read More
+              </button>
             </div>
           </div>
         </div>
