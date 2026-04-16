@@ -499,12 +499,12 @@ function LandingPage() {
           <div className="relative group pt-8 pl-8">
             {/* Anniversary Badge Overlay (Hanging Off) */}
             <div 
-              className="absolute left-0 top-0 z-20 flex h-32 w-32 flex-col items-center justify-center bg-[#2c0808] p-4 text-center shadow-[20px_20px_60px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:-translate-y-1 group-hover:-translate-x-1"
+              className="absolute left-0 top-6 z-20 flex h-28 w-28 flex-col items-center justify-center bg-[#2c0808] p-4 text-center shadow-[20px_20px_60px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:-translate-y-1 group-hover:-translate-x-1"
               style={{ border: '1px solid rgba(212, 175, 55, 0.2)' }}
             >
-              <p className="text-4xl font-serif font-bold text-[#d4af37]">10</p>
-              <p className="mt-2 text-[0.7rem] font-bold tracking-[0.3em] text-[#d4af37] uppercase leading-tight">Years</p>
-              <p className="mt-1 text-[0.6rem] font-bold tracking-[0.15em] text-[#d4af37]/80 uppercase leading-tight">Serving Miri</p>
+              <p className="text-3xl font-serif font-bold text-[#d4af37]">10</p>
+              <p className="mt-2 text-[0.65rem] font-bold tracking-[0.3em] text-[#d4af37] uppercase leading-tight">Years</p>
+              <p className="mt-1 text-[0.55rem] font-bold tracking-[0.15em] text-[#d4af37]/80 uppercase leading-tight">Serving Miri</p>
             </div>
 
             {/* Main Chef Image */}
